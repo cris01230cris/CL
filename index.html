@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Vocabolario EN→IT · Push to Talk</title>
+<title>Vocabolario EN→IT · CL26042222</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap');
 
@@ -446,7 +446,7 @@
 <div class="container">
   <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0 6px;">
     <span id="mode-label" style="font-weight:600;font-size:0.9rem;color:var(--accent);">EN → IT</span>
-    <span style="font-size:0.7rem;color:var(--muted);font-family:'Space Mono';">DS26042214</span>
+    <span style="font-size:0.7rem;color:var(--muted);font-family:'Space Mono';">CL26042222</span>
   </div>
 
   <!-- SETUP -->
@@ -494,7 +494,6 @@
       <button class="stop-circle-btn" id="stop-circle-btn" onclick="stopExercise()" title="Stop">⏹️</button>
       <div class="drill-counter-badge" id="drill-counter-badge" style="display:none;">0</div>
       <div class="mic-icon" id="mic-icon" ontouchstart="handlePushStart(event)" ontouchend="handlePushEnd(event)" onmousedown="handlePushStart(event)" onmouseup="handlePushEnd(event)">🎤</div>
-      <div class="mic-status" id="mic-status"></div>
     </div>
 
     <div class="manual-input" id="manual-input">
@@ -531,7 +530,6 @@
       <button class="stop-circle-btn" id="drill-stop-circle-btn" onclick="stopExercise()" title="Stop">⏹️</button>
       <div class="drill-counter-badge" id="drill-counter-badge-drill" style="display:none;">0</div>
       <div class="mic-icon" id="drill-mic-icon" ontouchstart="handleDrillPushStart(event)" ontouchend="handleDrillPushEnd(event)" onmousedown="handleDrillPushStart(event)" onmouseup="handleDrillPushEnd(event)">🎤</div>
-      <div class="mic-status" id="drill-mic-status"></div>
     </div>
     <div class="manual-input" id="drill-manual-input">
       <input type="text" id="drill-manual-text" placeholder="Scrivi la traduzione...">
@@ -555,6 +553,16 @@
     <button class="btn btn-secondary" onclick="repeatNew()">Parole nuove →</button>
     <button class="btn btn-secondary" onclick="goHome()">← Nuovo esercizio</button>
     <button class="btn btn-secondary" onclick="terminateExercise()">✕ Termina</button>
+  </div>
+  <!-- TERMINATE SCREEN -->
+  <div id="screen-terminate" class="screen">
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:24px;text-align:center;">
+      <div style="font-family:'Space Mono',monospace;font-size:0.65rem;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;">Sessione terminata</div>
+      <div style="font-family:'DM Sans',sans-serif;font-size:1rem;color:var(--text);line-height:1.7;max-width:320px;">
+        I parametri <span style="color:var(--accent);font-weight:700;">W = <span id="term-W"></span></span> e <span style="color:var(--accent);font-weight:700;">S = <span id="term-S"></span></span> utilizzati saranno riproposti al prossimo riavvio.
+      </div>
+      <button class="btn btn-secondary" style="max-width:200px;" onclick="location.reload()">↺ Ricomincia</button>
+    </div>
   </div>
 </div>
 
@@ -685,12 +693,23 @@ async function evaluateAnswer(ans, isDrill){
   let display; if(exerciseMode==='en')display=(w[2]==='verbo'?'To ':'')+w[1]; else display=w[1];
   const correct=containsTranslation(ans, getTranslationsList(w[3]));
   if(isDrill){
-    if(correct){ if(drillCurrentWord.counter < 3) drillCurrentWord.counter++; }
-    else drillCurrentWord.counter = 0;
-    updateDrillDots();
-    updateDrillCounterBadge();
-    await showDrillFeedback(correct,w,display);
-    if(correct && drillCurrentWord.counter >= 3){ drill = drill.filter(d=>d!==drillCurrentWord); updateDrillCounterBadge(); }
+    if(correct){
+      if(drillCurrentWord.counter < 2){
+        drillCurrentWord.counter++;
+        updateDrillDots(); updateDrillCounterBadge();
+        await showDrillFeedback(correct,w,display);
+      } else {
+        drill = drill.filter(d=>d!==drillCurrentWord);
+        updateDrillDots(); updateDrillCounterBadge();
+        await showDrillFeedback(correct,w,display);
+        if(drill.length===0){ showEnd(); return; }
+        nextDrillWord(); return;
+      }
+    } else {
+      drillCurrentWord.counter = 0;
+      updateDrillDots(); updateDrillCounterBadge();
+      await showDrillFeedback(correct,w,display);
+    }
   }else{
     if(!correct){ const exists=drill.find(d=>d.word[0]===w[0]); if(!exists) drill.push({word:w,counter:0}); }
     if(correct) stats.correct++; else stats.wrong++;
@@ -711,17 +730,38 @@ function showWord(){if(isPaused)return; isEvaluating=false; const w=words[curren
 function startDrill(){if(drill.length===0){showEnd();return;} document.getElementById('drill-confirm-count').textContent=drill.length; showScreen('screen-drill-confirm'); speakAsyncLang(`Vuoi consolidare le ${drill.length} parole sbagliate?`,'it-IT');}
 function confirmDrill(yes){if(yes){showScreen('screen-drill'); nextDrillWord();}else showEnd();}
 function showEnd(){if(currentRecognition)try{currentRecognition.stop()}catch(e){} currentRecognition=null; if(pendingEvalTimeout)clearTimeout(pendingEvalTimeout); const total=stats.correct+stats.wrong; const pct=total>0?Math.round((stats.correct/total)*100):0; document.getElementById('stat-correct').textContent=stats.correct; document.getElementById('stat-wrong').textContent=stats.wrong; document.getElementById('stat-total').textContent=total; document.getElementById('stat-pct').textContent=pct+'%'; showScreen('screen-end');}
-function repeatSame(){words=getWords(S,W); W=words.length; currentIdx=0; drill=[]; stats={correct:0,wrong:0}; retryCount=0; updateDrillCounterBadge(); saveProgress(); showScreen('screen-exercise'); showWord();}
-function repeatNew(){S=S+Math.floor(W/2); if(S>1000)S=1; words=getWords(S,W); W=words.length; currentIdx=0; drill=[]; stats={correct:0,wrong:0}; retryCount=0; updateDrillCounterBadge(); saveProgress(); showScreen('screen-exercise'); showWord();}
-function goHome(){if(currentRecognition)try{currentRecognition.stop()}catch(e){} currentRecognition=null; if(pendingEvalTimeout)clearTimeout(pendingEvalTimeout); showScreen('screen-setup');}
+function repeatSame(){
+  saveLastParams();
+  words=getWords(S,W); W=words.length; currentIdx=0; drill=[]; stats={correct:0,wrong:0}; retryCount=0;
+  updateDrillCounterBadge(); saveProgress();
+  showScreen('screen-exercise'); showWord();
+}
+function repeatNew(){
+  S = S + Math.floor(W/2);
+  if(S>1000) S=1;
+  saveLastParams();
+  words=getWords(S,W); W=words.length; currentIdx=0; drill=[]; stats={correct:0,wrong:0}; retryCount=0;
+  updateDrillCounterBadge(); saveProgress();
+  buildCatScreen(); showScreen('screen-cats');
+}
+function goHome(){
+  if(currentRecognition)try{currentRecognition.stop()}catch(e){}
+  currentRecognition=null;
+  if(pendingEvalTimeout)clearTimeout(pendingEvalTimeout);
+  document.getElementById('input-S').value=S;
+  document.getElementById('input-W').value=W;
+  showScreen('screen-setup');
+}
 function terminateExercise(){
-    if(window.speechSynthesis) window.speechSynthesis.cancel();
-    if(currentRecognition) try{ currentRecognition.stop(); } catch(e){}
-    currentRecognition = null;
-    if(pendingEvalTimeout) clearTimeout(pendingEvalTimeout);
-    saveLastParams(); // Salva i parametri correnti
-    showToast('Sessione terminata. I parametri W e S utilizzati saranno riproposti al prossimo riavvio.');
-    showEnd(); 
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+  if(currentRecognition) try{ currentRecognition.stop(); } catch(e){}
+  currentRecognition=null;
+  if(pendingEvalTimeout) clearTimeout(pendingEvalTimeout);
+  saveLastParams();
+  isHolding=false;
+  document.getElementById('term-W').textContent = W;
+  document.getElementById('term-S').textContent = S;
+  showScreen('screen-terminate');
 }
 function stopExercise(){if(currentRecognition)try{currentRecognition.stop()}catch(e){} currentRecognition=null; if(pendingEvalTimeout)clearTimeout(pendingEvalTimeout); showEnd();}
 function togglePause(){isPaused=!isPaused; const btns=document.querySelectorAll('.pause-btn'); btns.forEach(btn=>{if(isPaused){btn.textContent='▶️'; btn.classList.add('paused');}else{btn.textContent='⏸️'; btn.classList.remove('paused');}}); if(isPaused){if(currentRecognition)stopPushListening(false); if(pendingEvalTimeout)clearTimeout(pendingEvalTimeout); showToast('Pausa');}else{showToast('Ripresa'); if(words[currentIdx])setTimeout(()=>showWord(),300);}}
