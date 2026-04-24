@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Vocabolario EN→IT · CL26042309</title>
+<title>Vocabolario EN→IT · CL26042408</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap');
 
@@ -75,13 +75,13 @@
   }
 
   .screen { display: none; }
-  .screen.active { display: flex; flex-direction: column; gap: 8px; }
+  .screen.active { display: flex; flex-direction: column; gap: 12px; }
 
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 12px;
+    border-radius: 24px;
+    padding: 16px;
   }
 
   .card-label {
@@ -138,11 +138,14 @@
   }
 
   .progress-text {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.65rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
     color: #bbb;
-    text-align: right;
+    text-align: left;
     margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
   .word-category {
@@ -164,35 +167,33 @@
     cursor: pointer;
   }
 
-  /* MIC AREA RECTANGULAR - dimensioni ridotte per evitare sovrapposizioni */
   .mic-area {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 28px;
-    padding: 20px 16px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 8px;
     position: relative;
     user-select: none;
     touch-action: manipulation;
     width: 100%;
   }
 
-  /* pulsante microfono rettangolare più compatto */
   .mic-icon {
     width: 100%;
-    max-width: 240px;
-    height: 135px;
-    border-radius: 68px;
+    max-width: 220px;
+    height: 90px;
+    border-radius: 45px;
     background: var(--surface);
     border: 2px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 3.2rem;
+    font-size: 2.5rem;
     transition: all 0.05s ease;
     cursor: pointer;
     touch-action: manipulation;
@@ -201,14 +202,16 @@
   }
 
   .mic-icon.push-active {
+    background: var(--accent);
     border-color: var(--accent);
     color: var(--bg);
-    animation: pulseFlash 0.4s ease-in-out infinite alternate;
+    animation: pulseFlash 0.3s infinite alternate;
+    transform: scale(1.02);
   }
 
   @keyframes pulseFlash {
-    0%   { background: var(--accent); transform: scale(1.00); box-shadow: 0 0 0 0 rgba(232,255,71,0.9); }
-    100% { background: #c8e800;       transform: scale(1.07); box-shadow: 0 0 0 18px rgba(232,255,71,0); }
+    0% { box-shadow: 0 0 0 0 rgba(232,255,71,0.7); background: var(--accent); }
+    100% { box-shadow: 0 0 0 12px rgba(232,255,71,0); background: #f5ffb0; }
   }
 
   .pause-btn {
@@ -327,7 +330,7 @@
     font-family: 'DM Sans', sans-serif;
     font-weight: 600;
     font-size: 1rem;
-    padding: 12px;
+    padding: 14px;
     transition: all 0.1s;
     width: 100%;
     text-align: center;
@@ -349,20 +352,22 @@
     border: none;
     border-radius: 40px;
     cursor: pointer;
-    font-size: 0.8rem;
-    padding: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 16px;
     margin-top: 8px;
-    font-weight: 700;
     width: 100%;
+    text-transform: uppercase;
   }
   .btn-row {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 16px;
   }
   .btn-row .btn {
-    padding: 16px;
-    font-size: 1rem;
+    padding: 28px;
+    font-size: 1.2rem;
   }
   .stat-grid {
     display: grid;
@@ -444,18 +449,18 @@
 <div class="container">
   <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0 6px;">
     <span id="mode-label" style="font-weight:600;font-size:0.9rem;color:var(--accent);">EN → IT</span>
-    <span style="font-size:0.7rem;color:var(--muted);font-family:'Space Mono';">CL26042309</span>
+    <span style="font-size:0.7rem;color:var(--muted);font-family:'Space Mono';">CL26042408</span>
   </div>
 
   <!-- SETUP -->
   <div id="screen-setup" class="screen active">
     <div class="card">
       <div class="input-group">
-        <label>Da quale lemma iniziare? (1 – 1000)</label>
+        <label style="font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:600;text-transform:uppercase;color:var(--text);">DA QUALE LEMMA VUOI INIZIARE? (1-1000)</label>
         <input type="number" id="input-S" min="1" max="1000" value="1">
       </div>
       <div class="input-group">
-        <label>Quante parole vuoi tradurre? (1-50)</label>
+        <label style="font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:600;text-transform:uppercase;color:var(--text);">QUANTE PAROLE VUOI TRADURRE? (1-50)</label>
         <input type="number" id="input-W" min="1" max="50" value="10">
       </div>
       <div id="setup-error" class="error-msg"></div>
@@ -464,15 +469,15 @@
       <button id="btn-mode-en" onclick="setMode('en')" style="flex:1;padding:12px;background:var(--accent);color:#000;font-weight:700;border:none;">EN → IT</button>
       <button id="btn-mode-it" onclick="setMode('it')" style="flex:1;padding:12px;background:var(--surface);color:#888;font-weight:700;border:none;">IT → EN</button>
     </div>
-    <button class="btn btn-primary" onclick="startExercise()">Inizia esercizio →</button>
-    <button class="btn btn-secondary" onclick="loadProgress()">↻ Riprendi sessione interrotta</button>
+    <button class="btn btn-primary" onclick="startExercise()">INIZIA ESERCIZIO →</button>
+    <button class="btn btn-secondary" onclick="loadProgress()">↻ RIPRENDI SESSIONE INTERROTTA</button>
   </div>
 
   <!-- CATEGORIE -->
   <div id="screen-cats" class="screen">
     <div class="card"><div id="cat-list" style="display:flex;flex-direction:column;gap:10px;max-height:300px;overflow-y:auto;"></div></div>
-    <button class="btn btn-primary" onclick="confirmCats()">Conferma →</button>
-    <button class="btn btn-secondary" onclick="showScreen('screen-setup')">← Indietro</button>
+    <button class="btn btn-primary" onclick="confirmCats()">CONFERMA →</button>
+    <button class="btn btn-secondary" onclick="showScreen('screen-setup')">← INDIETRO</button>
   </div>
 
   <!-- ESERCIZIO PRINCIPALE -->
@@ -483,7 +488,7 @@
       <div style="margin-top:8px;">
         <div class="word-category" id="word-category"></div>
         <div class="word-english" id="word-english" onclick="toggleWordVisibility()"></div>
-        <button class="speak-btn" onclick="speakCurrentWord()">🔊 Riascolta</button>
+        <button class="speak-btn" onclick="speakCurrentWord()">🔊 RIASCOLTA</button>
       </div>
     </div>
 
@@ -491,12 +496,13 @@
       <button class="pause-btn" id="pause-btn" onclick="togglePause()" title="Pausa">⏸️</button>
       <button class="stop-circle-btn" id="stop-circle-btn" onclick="stopExercise()" title="Stop">⏹️</button>
       <div class="drill-counter-badge" id="drill-counter-badge" style="display:none;">0</div>
+      <div class="drill-counter-badge" id="srs-badge" style="display:none;bottom:12px;top:auto;background:#0a2a2a;border-color:var(--accent2);color:var(--accent2);">0</div>
       <div class="mic-icon" id="mic-icon" ontouchstart="handlePushStart(event)" ontouchend="handlePushEnd(event)" onmousedown="handlePushStart(event)" onmouseup="handlePushEnd(event)">🎤</div>
     </div>
 
     <div class="manual-input" id="manual-input">
       <input type="text" id="manual-text" placeholder="Scrivi la traduzione..." autocomplete="off" spellcheck="false" enterkeyhint="done">
-      <button class="btn btn-primary" onclick="submitManual()" style="color:#000;">Conferma</button>
+      <button class="btn btn-primary" onclick="submitManual()" style="color:#000;">CONFERMA</button>
     </div>
     <div class="feedback" id="feedback"><div class="feedback-icon" id="feedback-icon"></div><div class="feedback-text" id="feedback-text"></div></div>
   </div>
@@ -509,8 +515,8 @@
       <p style="font-size:0.7rem;">3 risposte corrette di fila per eliminare la parola.</p>
     </div>
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="confirmDrill(true)" style="background:var(--accent);">Sì, procedi</button>
-      <button class="btn btn-secondary" onclick="confirmDrill(false)">No, salta</button>
+      <button class="btn btn-primary" onclick="confirmDrill(true)" style="background:var(--accent);">SÌ, PROCEDI</button>
+      <button class="btn btn-secondary" onclick="confirmDrill(false)">NO, SALTA</button>
     </div>
   </div>
 
@@ -520,18 +526,19 @@
       <div class="card-label">Drill · Parole sbagliate</div>
       <div class="word-category" id="drill-category"></div>
       <div class="word-english" id="drill-word" onclick="toggleWordVisibility()"></div>
-      <button class="speak-btn" onclick="speakDrillWord()">🔊 Riascolta</button>
+      <button class="speak-btn" onclick="speakDrillWord()">🔊 RIASCOLTA</button>
       <div class="drill-dots" id="drill-dots"></div>
     </div>
     <div class="mic-area" id="drill-mic-area">
       <button class="pause-btn" id="drill-pause-btn" onclick="togglePause()" title="Pausa">⏸️</button>
       <button class="stop-circle-btn" id="drill-stop-circle-btn" onclick="stopExercise()" title="Stop">⏹️</button>
       <div class="drill-counter-badge" id="drill-counter-badge-drill" style="display:none;">0</div>
+      <div class="drill-counter-badge" id="srs-badge-drill" style="display:none;bottom:12px;top:auto;background:#0a2a2a;border-color:var(--accent2);color:var(--accent2);">0</div>
       <div class="mic-icon" id="drill-mic-icon" ontouchstart="handleDrillPushStart(event)" ontouchend="handleDrillPushEnd(event)" onmousedown="handleDrillPushStart(event)" onmouseup="handleDrillPushEnd(event)">🎤</div>
     </div>
     <div class="manual-input" id="drill-manual-input">
       <input type="text" id="drill-manual-text" placeholder="Scrivi la traduzione...">
-      <button class="btn btn-primary" onclick="submitDrillManual()" style="color:#000;">Conferma</button>
+      <button class="btn btn-primary" onclick="submitDrillManual()" style="color:#000;">CONFERMA</button>
     </div>
     <div class="feedback" id="drill-feedback"><div class="feedback-icon" id="drill-feedback-icon"></div><div class="feedback-text" id="drill-feedback-text"></div></div>
   </div>
@@ -550,10 +557,10 @@
         <div class="stat-box"><div class="stat-value" id="stat-pct">0%</div><div class="stat-label">Score</div></div>
       </div>
     </div>
-    <button class="btn btn-primary" onclick="repeatSame()">↻ Stesse parole</button>
-    <button class="btn btn-secondary" onclick="repeatNew()">Parole nuove →</button>
-    <button class="btn btn-secondary" onclick="goHome()">← Nuovo esercizio</button>
-    <button class="btn btn-secondary" onclick="terminateExercise()">✕ Termina</button>
+    <button class="btn btn-primary" onclick="repeatSame()">↻ STESSE PAROLE</button>
+    <button class="btn btn-secondary" onclick="repeatNew()">PAROLE NUOVE →</button>
+    <button class="btn btn-secondary" onclick="goHome()">← NUOVO ESERCIZIO</button>
+    <button class="btn btn-secondary" onclick="terminateExercise()">✕ TERMINA</button>
   </div>
   <!-- TERMINATE SCREEN -->
   <div id="screen-terminate" class="screen">
@@ -562,15 +569,12 @@
       <div style="font-family:'DM Sans',sans-serif;font-size:1rem;color:var(--text);line-height:1.7;max-width:320px;">
         I parametri <span style="color:var(--accent);font-weight:700;">W = <span id="term-W"></span></span> e <span style="color:var(--accent);font-weight:700;">S = <span id="term-S"></span></span> utilizzati saranno riproposti al prossimo riavvio.
       </div>
-      <button class="btn btn-secondary" style="max-width:200px;" onclick="location.reload()">↺ Ricomincia</button>
+      <button class="btn btn-secondary" style="max-width:200px;" onclick="location.reload()">↺ RICOMINCIA</button>
     </div>
   </div>
 </div>
 
 <script>
-
-
-
 // ==================== WORD LIST ====================
 const VALID_CATS = new Set(['sostantivo','verbo','aggettivo','avverbio','pronome','preposizione','congiunzione','articolo','aux','numero','particella']);
 
@@ -580,14 +584,15 @@ const RAW = [
 
 // global state
 let S = 1, W = 10;
-let Wbase = 10;   // W di base della progressione
-let sessionCount = 0; // quante sessioni 'Parole nuove' consecutive
 let words = [];
 let currentIdx = 0;
 let drill = [];
 let stats = {correct:0, wrong:0};
 let drillCurrentWord = null;
 let drillQueue = [];
+let srsWords = [];      // [{wordId, level, nextSession}]
+let sessionCount = 0;   // incrementa ad ogni fine sessione
+let Wbase = 10;         // W base per progressione
 let selectedCats = new Set(['sostantivo','verbo','aggettivo','avverbio']);
 let exerciseMode = 'en';
 let wordVisible = true;
@@ -608,23 +613,41 @@ function saveLastParams() {
     localStorage.setItem('lastW', W);
     localStorage.setItem('lastWbase', Wbase);
     localStorage.setItem('lastSessionCount', sessionCount);
+    localStorage.setItem('srsWords', JSON.stringify(srsWords));
 }
 function loadLastParams() {
     const savedS = localStorage.getItem('lastS');
     const savedW = localStorage.getItem('lastW');
-    if (savedS !== null && !isNaN(parseInt(savedS))) S = parseInt(savedS);
-    if (savedW !== null && !isNaN(parseInt(savedW))) { W = parseInt(savedW); Wbase = W; }
-    const savedWbase = localStorage.getItem('lastWbase');
-    const savedSC    = localStorage.getItem('lastSessionCount');
-    if (savedWbase !== null && !isNaN(parseInt(savedWbase))) Wbase = parseInt(savedWbase);
-    if (savedSC    !== null && !isNaN(parseInt(savedSC)))    sessionCount = parseInt(savedSC);
-    document.getElementById('input-S').value = S;
-    document.getElementById('input-W').value = W;
+    if(savedS!==null&&!isNaN(parseInt(savedS))) S=parseInt(savedS);
+    if(savedW!==null&&!isNaN(parseInt(savedW))){ W=parseInt(savedW); Wbase=W; }
+    const sWbase=localStorage.getItem('lastWbase');
+    const sSC=localStorage.getItem('lastSessionCount');
+    const sSRS=localStorage.getItem('srsWords');
+    if(sWbase!==null&&!isNaN(parseInt(sWbase))) Wbase=parseInt(sWbase);
+    if(sSC!==null&&!isNaN(parseInt(sSC))) sessionCount=parseInt(sSC);
+    if(sSRS){try{srsWords=JSON.parse(sSRS);}catch(e){srsWords=[];}}
+    document.getElementById('input-S').value=S;
+    document.getElementById('input-W').value=W;
+    updateSrsBadge();
 }
 
 function getBestItalianVoice() { if(bestItalianVoice)return bestItalianVoice; const voices=window.speechSynthesis.getVoices(); const pref=['Google','Alice','Federica','Silvia','Luca','it-IT']; for(let p of pref){let v=voices.find(v=>v.lang==='it-IT'&&v.name.includes(p));if(v){bestItalianVoice=v;return v;}} bestItalianVoice=voices.find(v=>v.lang==='it-IT')||voices[0]; return bestItalianVoice;}
 function getBestEnglishVoice() { if(bestEnglishVoice)return bestEnglishVoice; const voices=window.speechSynthesis.getVoices(); const pref=['Google','Samantha','Karen','en-US']; for(let p of pref){let v=voices.find(v=>v.lang==='en-US'&&v.name.includes(p));if(v){bestEnglishVoice=v;return v;}} bestEnglishVoice=voices.find(v=>v.lang==='en-US')||voices[0]; return bestEnglishVoice;}
-function speakAsyncLang(text, lang){if(!window.speechSynthesis)return Promise.resolve(); window.speechSynthesis.cancel(); return new Promise(resolve=>{const u=new SpeechSynthesisUtterance(text); u.lang=lang; u.rate=0.85; if(lang==='it-IT'){let v=getBestItalianVoice(); if(v)u.voice=v;} else if(lang==='en-US'){let v=getBestEnglishVoice(); if(v)u.voice=v;} u.onend=resolve; u.onerror=resolve; window.speechSynthesis.speak(u); setTimeout(resolve, Math.max(1500, text.length*80));});}
+function speakAsyncLang(text, lang){
+  if(!window.speechSynthesis) return Promise.resolve();
+  window.speechSynthesis.cancel();
+  return new Promise(resolve=>{
+    let done=false;
+    const finish=()=>{ if(!done){done=true; resolve();} };
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang=lang; u.rate=0.85;
+    if(lang==='it-IT'){ const v=getBestItalianVoice(); if(v) u.voice=v; }
+    else if(lang==='en-US'){ const v=getBestEnglishVoice(); if(v) u.voice=v; }
+    u.onend=finish; u.onerror=finish;
+    window.speechSynthesis.speak(u);
+    setTimeout(finish, Math.max(2000, text.length*90));
+  });
+}
 
 function getWords(s,w){const eligible=[]; for(let i=s-1;i<RAW.length&&eligible.length<w*3;i++){if(selectedCats.has(RAW[i][2]))eligible.push(RAW[i]);} return shuffle(eligible.slice(0,w));}
 function shuffle(arr){let a=[...arr]; for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a;}
@@ -634,7 +657,88 @@ function startExercise(){const sVal=parseInt(document.getElementById('input-S').
 const ALL_CATS=['aggettivo','articolo','aux','avverbio','congiunzione','numero','particella','preposizione','pronome','sostantivo','verbo'];
 function buildCatScreen(){const list=document.getElementById('cat-list'); list.innerHTML=''; ALL_CATS.sort().forEach(cat=>{const isOn=selectedCats.has(cat); const div=document.createElement('div'); div.className='cat-toggle'+(isOn?' selected':''); div.dataset.cat=cat; div.innerHTML=`<span class="cat-toggle-label">${cat}</span><div class="cat-toggle-check">${isOn?'✓':''}</div>`; div.onclick=()=>toggleCat(cat,div); list.appendChild(div);});}
 function toggleCat(cat,el){if(selectedCats.has(cat)){if(selectedCats.size<=1)return; selectedCats.delete(cat); el.classList.remove('selected'); el.querySelector('.cat-toggle-check').textContent='';}else{selectedCats.add(cat); el.classList.add('selected'); el.querySelector('.cat-toggle-check').textContent='✓';}}
-function confirmCats(){words=getWords(S,W); if(words.length===0){alert('Nessuna parola con queste categorie.'); return;} W=words.length; currentIdx=0; drill=[]; stats={correct:0,wrong:0}; retryCount=0; updateDrillCounterBadge(); saveProgress(); showScreen('screen-exercise'); showWord();}
+
+// ── SRS: Ripasso ──────────────────────────────────────────────────────────────
+const SRS_INTERVALS = [0, 1, 3, 7]; // sessioni da aspettare per livello 1,2,3
+function updateSrsBadge(){
+  const wordMap=new Map(RAW.map(w=>[w[0],w]));
+  const active=srsWords.filter(s=>{ const w=wordMap.get(s.wordId); return w&&selectedCats.has(w[2]); });
+  ['srs-badge','srs-badge-drill'].forEach(id=>{
+    const b=document.getElementById(id);
+    if(!b) return;
+    if(active.length>0){b.style.display='flex'; b.textContent=active.length;}
+    else b.style.display='none';
+  });
+}
+function getSrsDueWords(){
+  // parole SRS in scadenza in questa sessione, con categoria attiva
+  const wordMap=new Map(RAW.map(w=>[w[0],w]));
+  return srsWords.filter(s=>{
+    const w=wordMap.get(s.wordId);
+    return w && selectedCats.has(w[2]) && sessionCount>=s.nextSession;
+  });
+}
+function pickSrsWords(cap){
+  // slot bilanciati per livello, max cap parole totali
+  const due=getSrsDueWords();
+  if(due.length===0) return [];
+  const byLevel={1:[],2:[],3:[]};
+  due.forEach(s=>{ if(byLevel[s.level]) byLevel[s.level].push(s); });
+  const levels=Object.keys(byLevel).filter(l=>byLevel[l].length>0);
+  const result=[];
+  let idx=0;
+  while(result.length<cap && result.length<due.length){
+    const lv=levels[idx%levels.length];
+    if(byLevel[lv].length>0) result.push(byLevel[lv].shift());
+    idx++;
+  }
+  const wordMap=new Map(RAW.map(w=>[w[0],w]));
+  return result.map(s=>({ word:wordMap.get(s.wordId), isSrs:true, srsLevel:s.level })).filter(x=>x.word);
+}
+function promoteSrs(wordId){
+  const entry=srsWords.find(s=>s.wordId===wordId);
+  if(!entry) return;
+  entry.level++;
+  if(entry.level>=4){
+    srsWords=srsWords.filter(s=>s.wordId!==wordId); // esce definitivamente
+  } else {
+    entry.nextSession=sessionCount+SRS_INTERVALS[entry.level];
+  }
+  saveLastParams(); updateSrsBadge();
+}
+function demoteSrs(wordId){
+  // sbagliata in sessione normale: mantieni livello, torna disponibile prossima sessione
+  const entry=srsWords.find(s=>s.wordId===wordId);
+  if(!entry) return;
+  entry.nextSession=sessionCount+1;
+  saveLastParams(); updateSrsBadge();
+}
+function addToSrs(wordId){
+  if(srsWords.find(s=>s.wordId===wordId)) return; // già presente
+  srsWords.push({wordId, level:1, nextSession:sessionCount+SRS_INTERVALS[1]});
+  saveLastParams(); updateSrsBadge();
+}
+function incrSessionCount(){
+  sessionCount++;
+  saveLastParams();
+}
+// ─────────────────────────────────────────────────────────────────────────────
+function confirmCats(){
+  const base=getWords(S,W);
+  if(base.length===0){alert('Nessuna parola con queste categorie.'); return;}
+  const cap=Math.max(1,Math.round(base.length*0.25));
+  const srsSlot=pickSrsWords(cap).map(x=>({...x, counter:0}));
+  // Aggiungi isSrs flag alle parole normali
+  const normal=base.map(w=>({word:w,isSrs:false,srsLevel:0,counter:0}));
+  // Mescola SRS dentro le normali
+  const merged=shuffle([...normal, ...srsSlot]);
+  words=merged.map(x=>x.word||x); // compatibilità: words contiene raw word arrays
+  // Teniamo mappa SRS per evaluateAnswer
+  window._wordsSrsMeta=new Map(merged.map((x,i)=>[i,{isSrs:x.isSrs,srsLevel:x.srsLevel}]));
+  W=words.length; currentIdx=0; drill=[]; stats={correct:0,wrong:0}; retryCount=0;
+  updateDrillCounterBadge(); updateSrsBadge(); saveProgress();
+  showScreen('screen-exercise'); showWord();
+}
 function updateDrillCounterBadge(){const b=document.getElementById('drill-counter-badge'); const b2=document.getElementById('drill-counter-badge-drill'); if(b){if(drill.length>0){b.style.display='flex'; b.textContent=drill.length;}else b.style.display='none';} if(b2){if(drill.length>0){b2.style.display='flex'; b2.textContent=drill.length;}else b2.style.display='none';}}
 function setWordText(id,text){const el=document.getElementById(id); if(!el)return; el.dataset.real=text; el.textContent=wordVisible?text:MASK;}
 function toggleWordVisibility(){wordVisible=!wordVisible; const w1=document.getElementById('word-english'); if(w1){if(!wordVisible){w1.dataset.real=w1.textContent; w1.textContent=MASK;}else if(w1.dataset.real)w1.textContent=w1.dataset.real;} const w2=document.getElementById('drill-word'); if(w2){if(!wordVisible){w2.dataset.real=w2.textContent; w2.textContent=MASK;}else if(w2.dataset.real)w2.textContent=w2.dataset.real;}}
@@ -643,7 +747,7 @@ function speakCurrentWord(){if(words[currentIdx]){const w=words[currentIdx]; if(
 function speakDrillWord(){if(drillCurrentWord){const w=drillCurrentWord.word; if(exerciseMode==='en')speakAsyncLang((w[2]==='verbo'?'To ':'')+w[1],'en-US'); else speakAsyncLang(w[3].split(';')[0].trim().split('/')[0].trim(),'it-IT');}}
 
 async function startPushListening(isDrillMode=false){
-  if(isPaused){showToast('Pausa attiva'); return;}
+  if(isPaused){showToast('PAUSA ATTIVA'); return;}
   if(currentRecognition) _killRecognition();
   const hasPerm=await navigator.mediaDevices.getUserMedia({audio:true}).then(s=>{s.getTracks().forEach(t=>t.stop()); return true;}).catch(()=>false);
   if(!hasPerm){showToast('Permetti microfono'); isHolding=false; return;}
@@ -660,7 +764,7 @@ function _spawnRecognition(isDrillMode){
   currentRecognition.continuous=true;
   currentRecognition.interimResults=false;
   currentRecognition.onresult=(e)=>{ for(let i=e.resultIndex;i<e.results.length;i++){ if(e.results[i].isFinal) currentTranscript+=' '+e.results[i][0].transcript; } };
-  currentRecognition.onerror=()=>{ currentRecognition=null; if(isHolding) setTimeout(()=>_spawnRecognition(isDrillMode), 250); };
+  currentRecognition.onerror=(e)=>{ currentRecognition=null; if(e.error==='not-allowed'||e.error==='service-not-allowed'){isHolding=false;showToast('PERMESSO MICROFONO REVOCATO');return;} if(isHolding) setTimeout(()=>_spawnRecognition(isDrillMode), 250); };
   currentRecognition.onend=()=>{
     currentRecognition=null;
     if(isHolding){
@@ -668,11 +772,7 @@ function _spawnRecognition(isDrillMode){
     } else {
       micIcon.classList.remove('push-active');
       if(pendingEvalTimeout) clearTimeout(pendingEvalTimeout);
-      pendingEvalTimeout = setTimeout(()=>{
-        if(currentTranscript.trim().length>0) evaluateAnswer(currentTranscript.trim().toLowerCase(), isDrillMode);
-        else { retryCount++; showToast(`Nessuna parola. Tentativo ${retryCount}`); if(!isDrillMode) setTimeout(()=>showWord(),1500); else setTimeout(()=>{if(drillCurrentWord) startPushListening(true);},1500); }
-        pendingEvalTimeout=null;
-      }, 300);
+      pendingEvalTimeout=setTimeout(()=>{ pendingEvalTimeout=null; _doEvaluate(isDrillMode); },300);
     }
   };
   try{ currentRecognition.start(); }catch(e){ if(isHolding) setTimeout(()=>_spawnRecognition(isDrillMode), 300); }
@@ -680,14 +780,25 @@ function _spawnRecognition(isDrillMode){
 function _killRecognition(){ if(currentRecognition){ try{currentRecognition.stop();}catch(e){} currentRecognition=null; } }
 function stopPushListening(isDrillMode=false){
   isHolding=false;
-  if(pendingEvalTimeout) clearTimeout(pendingEvalTimeout);
+  if(pendingEvalTimeout){ clearTimeout(pendingEvalTimeout); pendingEvalTimeout=null; }
+  const micIcon=document.getElementById(isDrillMode?'drill-mic-icon':'mic-icon');
   if(!currentRecognition){
-    const micIcon=document.getElementById(isDrillMode?'drill-mic-icon':'mic-icon');
+    // recognition già chiusa: valuta subito
     micIcon.classList.remove('push-active');
-    if(currentTranscript.trim().length>0) evaluateAnswer(currentTranscript.trim().toLowerCase(), isDrillMode);
-    else { retryCount++; showToast(`Nessuna parola. Tentativo ${retryCount}`); if(!isDrillMode) setTimeout(()=>showWord(),1500); else setTimeout(()=>{if(drillCurrentWord) startPushListening(true);},1500); }
+    _doEvaluate(isDrillMode);
   } else {
+    // recognition ancora aperta: fermala, la valutazione arriverà via onend
     try{ currentRecognition.stop(); }catch(e){}
+  }
+}
+function _doEvaluate(isDrillMode){
+  if(currentTranscript.trim().length>0){
+    evaluateAnswer(currentTranscript.trim().toLowerCase(), isDrillMode);
+  } else {
+    retryCount++;
+    showToast(`Nessuna parola. Tentativo ${retryCount}`);
+    if(!isDrillMode) setTimeout(()=>showWord(),1500);
+    else setTimeout(()=>{ if(drillCurrentWord) startPushListening(true); },1500);
   }
 }
 function handlePushStart(e){ e.preventDefault(); if(isEvaluating) return; isHolding=true; currentTranscript=''; if(currentRecognition) _killRecognition(); startPushListening(false);}
@@ -698,7 +809,7 @@ function handleDrillPushEnd(e){ e.preventDefault(); stopPushListening(true);}
 function submitManual(){if(isPaused){showToast('Pausa');return;} const val=document.getElementById('manual-text').value.trim().toLowerCase(); if(!val)return; document.getElementById('manual-text').value=''; if(currentRecognition)stopPushListening(false); if(pendingEvalTimeout)clearTimeout(pendingEvalTimeout); isEvaluating=true; evaluateAnswer(val,false);}
 function submitDrillManual(){if(isPaused){showToast('Pausa');return;} const val=document.getElementById('drill-manual-text').value.trim().toLowerCase(); if(!val)return; document.getElementById('drill-manual-text').value=''; if(currentRecognition)stopPushListening(true); if(pendingEvalTimeout)clearTimeout(pendingEvalTimeout); isEvaluating=true; evaluateAnswer(val,true);}
 
-function normalize(s){return s.toLowerCase().replace(/[''`]/g,' ').replace(/[àáâãä]/g,'a').replace(/[èéêë]/g,'e').replace(/[ìíîï]/g,'i').replace(/[òóôõö]/g,'o').replace(/[ùúûü]/g,'u').replace(/[ç]/g,'c').replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,' ').trim();}
+function normalize(s){return s.toLowerCase().replace(/[''`]/g,' ').replace(/[àáâãä]/g,'a').replace(/[èéêë]/g,'e').replace(/[ìíîï]/g,'i').replace(/[òóôõö]/g,'o').replace(/[ùúûü]/g,'u').replace(/[ç]/g,'c').replace(/[^a-z0-9\s]/g,'').trim();}
 function getTranslationsList(str){const res=[]; str.split(';').forEach(p=>{p.split('/').forEach(sub=>res.push(sub.trim().toLowerCase()));}); return res;}
 function containsTranslation(transcript,translations){const norm=normalize(transcript); const words=norm.split(/\s+/); for(let t of translations){if(words.includes(normalize(t)))return true; if(norm.includes(normalize(t)))return true;} return false;}
 
@@ -709,27 +820,36 @@ async function evaluateAnswer(ans, isDrill){
   if(isDrill){
     if(correct){
       if(drillCurrentWord.counter < 2){
-        drillCurrentWord.counter++;             // PRIMA
+        drillCurrentWord.counter++;
         updateDrillDots(); updateDrillCounterBadge();
         await showDrillFeedback(correct,w,display);
       } else {
-        // 2 pallini verdi + questo corretto → rimuovi
-        drill = drill.filter(d=>d!==drillCurrentWord);
-        drillQueue = drillQueue.filter(d=>drill.includes(d));
+        drill=drill.filter(d=>d!==drillCurrentWord);
+        drillQueue=drillQueue.filter(d=>drill.includes(d));
         updateDrillDots(); updateDrillCounterBadge();
         await showDrillFeedback(correct,w,display);
         if(drill.length===0){ showEnd(); return; }
         nextDrillWord(); return;
       }
     } else {
-      drillCurrentWord.counter = 0;             // PRIMA
+      drillCurrentWord.counter=0;
       updateDrillDots(); updateDrillCounterBadge();
       await showDrillFeedback(correct,w,display);
     }
   }else{
-    if(!correct){ const exists=drill.find(d=>d.word[0]===w[0]); if(!exists) drill.push({word:w,counter:0}); }
-    if(correct) stats.correct++; else stats.wrong++;
-    updateDrillCounterBadge(); saveProgress();
+    const meta=window._wordsSrsMeta&&window._wordsSrsMeta.get(currentIdx);
+    const isSrsWord=meta&&meta.isSrs;
+    if(correct){
+      stats.correct++;
+      if(isSrsWord) promoteSrs(w[0]);
+    } else {
+      stats.wrong++;
+      if(isSrsWord) demoteSrs(w[0]);
+      else addToSrs(w[0]); // parola normale sbagliata → entra in SRS livello 1 al prossimo drill completato
+      const exists=drill.find(d=>d.word[0]===w[0]);
+      if(!exists) drill.push({word:w,counter:0});
+    }
+    updateDrillCounterBadge(); updateSrsBadge(); saveProgress();
     await showFeedback(correct,w,display);
   }
 }
@@ -738,11 +858,11 @@ async function showFeedback(correct,word,display){
   const fb=document.getElementById('feedback'); const icon=document.getElementById('feedback-icon'); const text=document.getElementById('feedback-text');
   fb.className='feedback show '+(correct?'correct':'wrong'); icon.textContent=correct?'✓':'✗';
   if(exerciseMode==='en'){
-    if(correct){text.textContent=`Yes. ${display}.`; await speakAsyncLang('Yes. '+display,'en-US');}
-    else{const first=word[3].split(';')[0].trim().split('/')[0].trim(); text.textContent=`No. ${first}.`; await speakAsyncLang('No. '+first,'it-IT');}
+    if(correct){ text.textContent=`Yes. ${display}.`; await speakAsyncLang('Yes. '+display,'en-US'); }
+    else{ const first=word[3].split(';')[0].trim().split('/')[0].trim(); text.textContent=`No. ${first}.`; await speakAsyncLang('No. '+first,'it-IT'); }
   }else{
-    if(correct){text.textContent=`Yes. ${display}.`; await speakAsyncLang('Yes. '+display,'it-IT');}
-    else{const first=(word[2]==='verbo'?'To ':'')+word[1]; text.textContent=`No. ${first}.`; await speakAsyncLang('No. '+first,'en-US');}
+    if(correct){ text.textContent=`Yes. ${display}.`; await speakAsyncLang('Yes. '+display,'it-IT'); }
+    else{ const first=(word[2]==='verbo'?'To ':'')+word[1]; text.textContent=`No. ${first}.`; await speakAsyncLang('No. '+first,'en-US'); }
   }
   await sleep(2000); isEvaluating=false; nextWord();
 }
@@ -750,17 +870,35 @@ async function showDrillFeedback(correct,word,display){
   const fb=document.getElementById('drill-feedback'); const icon=document.getElementById('drill-feedback-icon'); const text=document.getElementById('drill-feedback-text');
   fb.className='feedback show '+(correct?'correct':'wrong'); icon.textContent=correct?'✓':'✗';
   if(exerciseMode==='en'){
-    if(correct){text.textContent=`Yes. ${display}.`; await speakAsyncLang('Yes. '+display,'en-US');}
-    else{const first=word[3].split(';')[0].trim().split('/')[0].trim(); text.textContent=`No. ${first}.`; await speakAsyncLang('No. '+first,'it-IT');}
+    if(correct){ text.textContent=`Yes. ${display}.`; await speakAsyncLang('Yes. '+display,'en-US'); }
+    else{ const first=word[3].split(';')[0].trim().split('/')[0].trim(); text.textContent=`No. ${first}.`; await speakAsyncLang('No. '+first,'it-IT'); }
   }else{
-    if(correct){text.textContent=`Yes. ${display}.`; await speakAsyncLang('Yes. '+display,'it-IT');}
-    else{const first=(word[2]==='verbo'?'To ':'')+word[1]; text.textContent=`No. ${first}.`; await speakAsyncLang('No. '+first,'en-US');}
+    if(correct){ text.textContent=`Yes. ${display}.`; await speakAsyncLang('Yes. '+display,'it-IT'); }
+    else{ const first=(word[2]==='verbo'?'To ':'')+word[1]; text.textContent=`No. ${first}.`; await speakAsyncLang('No. '+first,'en-US'); }
   }
   await sleep(2000); isEvaluating=false; nextDrillWord();
 }
 function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
-function saveProgress(){localStorage.setItem('vocabProgress',JSON.stringify({S,W,currentIdx,stats,drill:drill.map(d=>({wordId:d.word[0],counter:d.counter})),wordIds:words.map(w=>w[0]),exerciseMode,selectedCats:Array.from(selectedCats)}));}
-function loadProgress(){const saved=localStorage.getItem('vocabProgress'); if(!saved){showToast('Nessun salvataggio'); return false;} try{const p=JSON.parse(saved); S=p.S;W=p.W;stats=p.stats; exerciseMode=p.exerciseMode; setMode(exerciseMode); selectedCats=new Set(p.selectedCats); const wordMap=new Map(RAW.map(w=>[w[0],w])); words=p.wordIds.map(id=>wordMap.get(id)).filter(w=>w); if(words.length===0)return false; currentIdx=p.currentIdx; drill=p.drill.map(d=>({word:wordMap.get(d.wordId),counter:d.counter})).filter(d=>d.word); updateDrillCounterBadge(); showScreen('screen-exercise'); showWord(); showToast('Ripristinato'); return true;}catch(e){showToast('Errore'); return false;}}
+function saveProgress(){localStorage.setItem('vocabProgress',JSON.stringify({S,W,currentIdx,stats,drill:drill.map(d=>({wordId:d.word[0],counter:d.counter})),wordIds:words.map(w=>w[0]),exerciseMode,selectedCats:Array.from(selectedCats),srsWords,sessionCount,Wbase}));}
+function loadProgress(){
+  const saved=localStorage.getItem('vocabProgress');
+  if(!saved){showToast('Nessun salvataggio'); return false;}
+  try{
+    const p=JSON.parse(saved);
+    S=p.S; W=p.W; stats=p.stats; exerciseMode=p.exerciseMode; setMode(exerciseMode);
+    selectedCats=new Set(p.selectedCats);
+    if(p.srsWords) srsWords=p.srsWords;
+    if(p.sessionCount!==undefined) sessionCount=p.sessionCount;
+    if(p.Wbase) Wbase=p.Wbase;
+    const wordMap=new Map(RAW.map(w=>[w[0],w]));
+    words=p.wordIds.map(id=>wordMap.get(id)).filter(w=>w);
+    if(words.length===0) return false;
+    currentIdx=p.currentIdx;
+    drill=p.drill.map(d=>({word:wordMap.get(d.wordId),counter:d.counter})).filter(d=>d.word);
+    updateDrillCounterBadge(); updateSrsBadge();
+    showScreen('screen-exercise'); showWord(); showToast('Ripristinato'); return true;
+  }catch(e){showToast('Errore'); return false;}
+}
 function updateDrillDots(){const dots=document.getElementById('drill-dots'); if(!dots||!drillCurrentWord)return; dots.innerHTML=''; for(let i=0;i<3;i++){const d=document.createElement('div'); if(i<drillCurrentWord.counter) d.className='drill-dot filled'; else if(i===drillCurrentWord.counter) d.className='drill-dot current'; else d.className='drill-dot'; dots.appendChild(d);}}
 function nextWord(){currentIdx++; if(currentIdx>=words.length){if(drill.length>0)startDrill(); else showEnd();}else showWord();}
 function nextDrillWord(){
@@ -777,34 +915,30 @@ function nextDrillWord(){
   document.getElementById('drill-manual-text').value='';
   setTimeout(async()=>{const spoken=exerciseMode==='en'?((w[2]==='verbo'?'To ':'')+w[1]):w[3].split(';')[0].trim().split('/')[0].trim(); await speakAsyncLang(spoken,exerciseMode==='en'?'en-US':'it-IT');},300);
 }
-function showWord(){if(isPaused)return; isEvaluating=false; const w=words[currentIdx]; document.getElementById('word-category').textContent=w[2].charAt(0).toUpperCase()+w[2].slice(1); if(exerciseMode==='en')setWordText('word-english',(w[2]==='verbo'?'To ':'')+w[1]); else setWordText('word-english',w[3].split(';')[0].trim().split('/')[0].trim()); const pct=(currentIdx/W)*100; document.getElementById('progress-fill').style.width=pct+'%'; document.getElementById('ex-progress-label').textContent=`Parola ${currentIdx+1} di ${W} da ${S}`; document.getElementById('feedback').className='feedback'; document.getElementById('manual-text').value=''; setTimeout(async()=>{const spoken=exerciseMode==='en'?((w[2]==='verbo'?'To ':'')+w[1]):w[3].split(';')[0].trim().split('/')[0].trim(); await speakAsyncLang(spoken,exerciseMode==='en'?'en-US':'it-IT');},300);}
+function showWord(){if(isPaused)return; isEvaluating=false; const w=words[currentIdx]; document.getElementById('word-category').textContent=w[2].charAt(0).toUpperCase()+w[2].slice(1); if(exerciseMode==='en')setWordText('word-english',(w[2]==='verbo'?'To ':'')+w[1]); else setWordText('word-english',w[3].split(';')[0].trim().split('/')[0].trim()); const pct=(currentIdx/W)*100; document.getElementById('progress-fill').style.width=pct+'%'; document.getElementById('ex-progress-label').textContent=`PAROLA ${currentIdx+1} DI ${W} DA ${S}`; document.getElementById('feedback').className='feedback'; document.getElementById('manual-text').value=''; setTimeout(async()=>{const spoken=exerciseMode==='en'?((w[2]==='verbo'?'To ':'')+w[1]):w[3].split(';')[0].trim().split('/')[0].trim(); await speakAsyncLang(spoken,exerciseMode==='en'?'en-US':'it-IT');},300);}
 function startDrill(){if(drill.length===0){showEnd();return;} document.getElementById('drill-confirm-count').textContent=drill.length; showScreen('screen-drill-confirm'); speakAsyncLang(`Vuoi consolidare le ${drill.length} parole sbagliate?`,'it-IT');}
 function confirmDrill(yes){if(yes){drillQueue=[]; showScreen('screen-drill'); nextDrillWord();}else showEnd();}
-function showEnd(){if(currentRecognition)try{currentRecognition.stop()}catch(e){} currentRecognition=null; if(pendingEvalTimeout)clearTimeout(pendingEvalTimeout); const total=stats.correct+stats.wrong; const pct=total>0?Math.round((stats.correct/total)*100):0; document.getElementById('stat-correct').textContent=stats.correct; document.getElementById('stat-wrong').textContent=stats.wrong; document.getElementById('stat-total').textContent=total; document.getElementById('stat-pct').textContent=pct+'%'; document.getElementById('end-S').textContent=S; document.getElementById('end-W').textContent=W; showScreen('screen-end');}
+function showEnd(){if(currentRecognition)try{currentRecognition.stop()}catch(e){} currentRecognition=null; if(pendingEvalTimeout)clearTimeout(pendingEvalTimeout); const total=stats.correct+stats.wrong; const pct=total>0?Math.round((stats.correct/total)*100):0; document.getElementById('stat-correct').textContent=stats.correct; document.getElementById('stat-wrong').textContent=stats.wrong; document.getElementById('stat-total').textContent=total; document.getElementById('stat-pct').textContent=pct+'%'; const es=document.getElementById('end-S'); const ew=document.getElementById('end-W'); if(es)es.textContent=S; if(ew)ew.textContent=W; showScreen('screen-end');}
 function repeatSame(){
+  incrSessionCount();
   saveLastParams();
   words=getWords(S,W); W=words.length; currentIdx=0; drill=[]; stats={correct:0,wrong:0}; retryCount=0;
   updateDrillCounterBadge(); saveProgress();
   showScreen('screen-exercise'); showWord();
 }
 function repeatNew(){
-  sessionCount++;
-  const phase = sessionCount % 3; // 0=reset W, 1=W+25%, 2=W+50%
-  if(phase === 0){
-    // ogni 3 sessioni: avanza S, reset W
-    S = S + Math.round(Wbase * 0.5);
-    if(S > 1000) S = 1;
-    W = Wbase;
-  } else {
-    W = Math.round(Wbase * (1 + phase * 0.25));
-  }
-  if(W > 50) W = 50;
+  incrSessionCount();
+  const phase=sessionCount%3;
+  if(phase===0){ S=S+Math.round(Wbase*0.5); if(S>1000)S=1; W=Wbase; }
+  else { W=Math.round(Wbase*(1+phase*0.25)); }
+  if(W>50) W=50;
   saveLastParams();
   words=getWords(S,W); W=words.length; currentIdx=0; drill=[]; stats={correct:0,wrong:0}; retryCount=0;
   updateDrillCounterBadge(); saveProgress();
   buildCatScreen(); showScreen('screen-cats');
 }
 function goHome(){
+  incrSessionCount();
   if(currentRecognition)try{currentRecognition.stop()}catch(e){}
   currentRecognition=null;
   if(pendingEvalTimeout)clearTimeout(pendingEvalTimeout);
@@ -824,9 +958,9 @@ function terminateExercise(){
   showScreen('screen-terminate');
 }
 function stopExercise(){if(currentRecognition)try{currentRecognition.stop()}catch(e){} currentRecognition=null; if(pendingEvalTimeout)clearTimeout(pendingEvalTimeout); showEnd();}
-function togglePause(){isPaused=!isPaused; const btns=document.querySelectorAll('.pause-btn'); btns.forEach(btn=>{if(isPaused){btn.textContent='▶️'; btn.classList.add('paused');}else{btn.textContent='⏸️'; btn.classList.remove('paused');}}); if(isPaused){if(currentRecognition)stopPushListening(false); if(pendingEvalTimeout)clearTimeout(pendingEvalTimeout); showToast('Pausa');}else{showToast('Ripresa'); if(words[currentIdx])setTimeout(()=>showWord(),300);}}
+function togglePause(){isPaused=!isPaused; const btns=document.querySelectorAll('.pause-btn'); btns.forEach(btn=>{if(isPaused){btn.textContent='▶️'; btn.classList.add('paused');}else{btn.textContent='⏸️'; btn.classList.remove('paused');}}); if(isPaused){if(currentRecognition)stopPushListening(false); if(pendingEvalTimeout)clearTimeout(pendingEvalTimeout); showToast('Pausa');}else{showToast('RIPRESA'); if(words[currentIdx])setTimeout(()=>showWord(),300);}}
 window.onload=function(){
-    loadLastParams(); // Ripristina gli ultimi S e W salvati
+    loadLastParams();
     if(window.speechSynthesis){
         window.speechSynthesis.getVoices();
         window.speechSynthesis.onvoiceschanged=()=>{getBestItalianVoice();getBestEnglishVoice();};
