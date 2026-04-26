@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Vocabolario EN→IT · CL26042510</title>
+<title>Vocabolario EN→IT · CL26042611</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap');
 
@@ -447,18 +447,18 @@
 <div class="container">
   <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0 6px;">
     <span id="mode-label" style="font-weight:600;font-size:0.9rem;color:var(--accent);">EN → IT</span>
-    <span style="font-size:0.7rem;color:var(--muted);font-family:'Space Mono';">CL26042510</span>
+    <span style="font-size:0.7rem;color:var(--muted);font-family:'Space Mono';">CL26042611</span>
   </div>
 
   <!-- SETUP -->
   <div id="screen-setup" class="screen active">
     <div class="card">
       <div class="input-group">
-        <label style="font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:600;text-transform:uppercase;color:var(--text);">DA QUALE LEMMA INIZIARE? (1-1000)</label>
+        <label style="font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:600;text-transform:uppercase;color:var(--text);text-align:center;display:block;">DA QUALE LEMMA INIZIARE? (1-1000)</label>
         <input type="number" id="input-S" min="1" max="1000" value="1">
       </div>
       <div class="input-group">
-        <label style="font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:600;text-transform:uppercase;color:var(--text);">QUANTE PAROLE TRADURRE? (1-50)</label>
+        <label style="font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:600;text-transform:uppercase;color:var(--text);text-align:center;display:block;">QUANTE PAROLE TRADURRE? (1-50)</label>
         <input type="number" id="input-W" min="1" max="50" value="10">
       </div>
       <div id="setup-error" class="error-msg"></div>
@@ -544,7 +544,7 @@
   <!-- END SCREEN -->
   <div id="screen-end" class="screen">
     <div style="background:rgba(232,255,71,0.08);border:1px solid var(--accent);border-radius:16px;padding:12px 16px;text-align:center;">
-      <span id="end-params" style="font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.05em;">S=<span id="end-S"></span> W=<span id="end-W"></span></span>
+      <span id="end-params" style="font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.05em;">S=<span id="end-S"></span> &nbsp;&nbsp; W=<span id="end-W"></span></span>
     </div>
     <div class="card">
       <div class="card-label">Risultati</div>
@@ -573,10 +573,6 @@
 </div>
 
 <script>
-// ==================== WORD LIST ====================
-const VALID_CATS = new Set(['sostantivo','verbo','aggettivo','avverbio','pronome','preposizione','congiunzione','articolo','aux','numero','particella']);
-
-const RAW = [
 // ==================== WORD LIST ====================
 const VALID_CATS = new Set(['sostantivo','verbo','aggettivo','avverbio','pronome','preposizione','congiunzione','articolo','aux','numero','particella']);
 
@@ -661,11 +657,12 @@ function toggleCat(cat,el){if(selectedCats.has(cat)){if(selectedCats.size<=1)ret
 // ── SRS: Ripasso ──────────────────────────────────────────────────────────────
 const SRS_INTERVALS=[0,1,3,7]; // intervalli sessioni per livello 0,1,2,3
 function updateSrsBadge(){
-  const wordMap=new Map(RAW.map(w=>[w[0],w]));
-  const active=srsWords.filter(s=>{ const w=wordMap.get(s.wordId); return w&&selectedCats.has(w[2]); });
+  // Il badge mostra le Parole Ripasso della sessione corrente (TPR):
+  // quante parole SRS restano ancora da completare in questa sessione.
+  const tpr=_srsSlotCount>0?_srsSlotCount:0;
   ['srs-badge','srs-badge-drill'].forEach(id=>{
     const b=document.getElementById(id); if(!b)return;
-    if(active.length>0){b.style.display='flex';b.textContent=active.length;}
+    if(tpr>0){b.style.display='flex';b.textContent=tpr;}
     else b.style.display='none';
   });
 }
@@ -708,6 +705,7 @@ function promoteSrs(wordId){
   e.level++;
   if(e.level>=4) srsWords=srsWords.filter(s=>Number(s.wordId)!==id);
   else e.nextSession=sessionCount+SRS_INTERVALS[e.level];
+  if(_srsSlotCount>0) _srsSlotCount--;
   saveLastParams(); updateSrsBadge();
 }
 function demoteSrs(wordId){
@@ -802,9 +800,9 @@ function _doEvaluate(isDrillMode){
     else setTimeout(()=>{ if(drillCurrentWord) startPushListening(true); },1500);
   }
 }
-function handlePushStart(e){ e.preventDefault(); if(isEvaluating) return; isHolding=true; currentTranscript=''; if(currentRecognition) _killRecognition(); startPushListening(false);}
+function handlePushStart(e){ e.preventDefault(); if(isEvaluating) return; if(navigator.vibrate) navigator.vibrate([100,50,100]); isHolding=true; currentTranscript=''; if(currentRecognition) _killRecognition(); startPushListening(false);}
 function handlePushEnd(e){ e.preventDefault(); stopPushListening(false);}
-function handleDrillPushStart(e){ e.preventDefault(); if(isEvaluating) return; isHolding=true; currentTranscript=''; if(currentRecognition) _killRecognition(); startPushListening(true);}
+function handleDrillPushStart(e){ e.preventDefault(); if(isEvaluating) return; if(navigator.vibrate) navigator.vibrate([100,50,100]); isHolding=true; currentTranscript=''; if(currentRecognition) _killRecognition(); startPushListening(true);}
 function handleDrillPushEnd(e){ e.preventDefault(); stopPushListening(true);}
 
 function submitManual(){if(isPaused){showToast('Pausa');return;} const val=document.getElementById('manual-text').value.trim().toLowerCase(); if(!val)return; document.getElementById('manual-text').value=''; if(currentRecognition)stopPushListening(false); if(pendingEvalTimeout)clearTimeout(pendingEvalTimeout); isEvaluating=true; evaluateAnswer(val,false);}
