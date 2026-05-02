@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Vocabolario EN→IT · CL26050210</title>
+<title>Vocabolario EN→IT · CL26050220</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap');
 
@@ -310,7 +310,7 @@
   <!-- HEADER -->
   <div id="global-header" style="display:flex;justify-content:space-between;align-items:center;padding:2px 0 4px;flex-shrink:0;">
     <div id="header-left"></div>
-    <span style="font-size:0.7rem;color:var(--muted);font-family:'Space Mono';">CL26050210</span>
+    <span style="font-size:0.7rem;color:var(--muted);font-family:'Space Mono';">CL26050220</span>
   </div>
 
   <!-- ═══════════════ SETUP ═══════════════ -->
@@ -411,7 +411,7 @@
   <!-- ═══════════════ END SCREEN ═══════════════ -->
   <div id="screen-end" class="screen">
     <div style="background:rgba(232,255,71,0.08);border:1px solid var(--accent);border-radius:16px;padding:12px 16px;text-align:center;">
-      <span style="font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.05em;">S=<span id="end-S"></span> &nbsp;&nbsp; W=<span id="end-W"></span></span>
+      <span style="font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.05em;">S=<span id="end-S"></span> &nbsp; W=<span id="end-W"></span> &nbsp; ✖=<span id="end-X"></span> &nbsp; ♻=<span id="end-Y"></span></span>
     </div>
     <div class="card">
       <div class="card-label">Risultati</div>
@@ -561,11 +561,13 @@ function loadHistory(){
   const raw=localStorage.getItem('sessionHistory');
   if(raw){try{sessionHistory=JSON.parse(raw);}catch(e){sessionHistory=[];}}
 }
-// (7) addHistoryEntry solo se sessione COMPLETA (normale + drill entrambi terminati)
+// addHistoryEntry: solo quando Traduzione Normale completata
+// X = valore più alto del Contatore Drill durante la sessione (anche se Drill saltato)
+// Y = numero totale Parole Ripasso a fine sessione
 function addHistoryEntry(){
-  const entry={S,W,X:_sessionMaxDrill,Y:_sessionEndSrs,mode:exerciseMode,cats:Array.from(selectedCats)};
+  const entry={S,W,X:_sessionMaxDrill,Y:srsWords.length,mode:exerciseMode,cats:Array.from(selectedCats)};
   sessionHistory.unshift(entry);
-  // (6) mantieni solo 9
+  // mantieni solo 9
   if(sessionHistory.length>9) sessionHistory=sessionHistory.slice(0,9);
   saveHistory();
 }
@@ -655,6 +657,7 @@ function updateSrsBadge(){
 
 function getSrsDue(){
   const wordMap=new Map(RAW.map(w=>[w[0],w]));
+  // Una Parola Ripasso è "due" se sessionCount >= nextSession
   return srsWords.filter(s=>{const w=wordMap.get(s.wordId);return w&&selectedCats.has(w[2])&&sessionCount>=s.nextSession;});
 }
 
@@ -706,11 +709,12 @@ function pickSrsSlots(cap){
   return result.map(s=>({rawWord:wordMap.get(s.wordId),wordId:s.wordId,level:s.level})).filter(x=>x.rawWord);
 }
 
-// (2) addToSrs: Parola Normale sbagliata → Parola Ripasso liv1, Contatore Ripasso +1
+// addToSrs: Parola Normale sbagliata → Parola Ripasso liv1, Contatore Ripasso +1
+// nextSession = sessionCount+1 → disponibile dalla sessione SUCCESSIVA
 function addToSrs(wordId){
   const id=Number(wordId);
   if(srsWords.find(s=>Number(s.wordId)===id)) return; // già presente, non duplicare
-  srsWords.push({wordId:id,level:1,nextSession:sessionCount+SRS_INTERVALS[1]});
+  srsWords.push({wordId:id,level:1,nextSession:sessionCount+1});
   saveLastParams(); updateSrsBadge();
 }
 
@@ -740,6 +744,9 @@ function demoteSrs(wordId){
   saveLastParams(); updateSrsBadge();
 }
 
+// incrSessionCount: chiamato a fine sessione, PRIMA di iniziare la successiva
+// In questo modo le parole aggiunte all'SRS nella sessione N (nextSession=N+1)
+// diventano disponibili quando sessionCount raggiunge N+1
 function incrSessionCount(){sessionCount++;saveLastParams();}
 
 // ── CONFIRM CATS / START ──
@@ -809,13 +816,12 @@ function showWord(){
 
 // ── DRILL FLOW ──
 function startDrill(){
+  _normalPhaseCompleted=true; // la Traduzione Normale è sempre terminata qui
   if(drill.length===0){
-    _normalPhaseCompleted=true;
-    _drillPhaseCompleted=true; // nessun drill → completa
-    showEnd();
+    _drillPhaseCompleted=true;
+    showEnd(); // nessun drill → completa direttamente
     return;
   }
-  _normalPhaseCompleted=true;
   document.getElementById('drill-confirm-count').textContent=drill.length;
   showScreen('screen-drill-confirm');
   speakAsyncLang(`Vuoi consolidare le ${drill.length} parole sbagliate?`,'it-IT');
@@ -823,21 +829,21 @@ function startDrill(){
 function confirmDrill(yes){
   if(yes){drillQueue=[];showScreen('screen-drill');nextDrillWord();}
   else{
-    // (7) Se si salta il drill → sessione incompleta (non salvata)
-    showEndIncomplete();
+    // Salto drill: la Traduzione Normale era completata → sessione valida per lo storico
+    showEnd();
   }
 }
 
 // ── END ──
-// (7) showEnd = sessione COMPLETA (normale + drill entrambi superati)
+// showEnd = sessione COMPLETA (Traduzione Normale terminata, con o senza Drill)
 function showEnd(){
   _drillPhaseCompleted=true;
   if(currentRecognition)try{currentRecognition.stop()}catch(e){}
   currentRecognition=null;
   if(pendingEvalTimeout)clearTimeout(pendingEvalTimeout);
   _sessionEndSrs=srsWords.length;
-  // Salva nello storico solo se completa
-  if(_normalPhaseCompleted&&_drillPhaseCompleted){
+  // Salva nello storico solo se Traduzione Normale completata
+  if(_normalPhaseCompleted){
     addHistoryEntry();
   }
   _fillEndStats();
@@ -859,7 +865,10 @@ function _fillEndStats(){
   document.getElementById('stat-total').textContent=total;
   document.getElementById('stat-pct').textContent=pct+'%';
   const eS=document.getElementById('end-S');const eW=document.getElementById('end-W');
+  const eX=document.getElementById('end-X');const eY=document.getElementById('end-Y');
   if(eS)eS.textContent=S;if(eW)eW.textContent=W;
+  if(eX)eX.textContent=_sessionMaxDrill;
+  if(eY)eY.textContent=srsWords.length;
 }
 
 // (7) Stop button → sessione incompleta
@@ -903,7 +912,9 @@ function startExercise(){
   if(!sVal||sVal<1||sVal>1000){err.textContent='S (1–1000)';err.classList.add('show');return;}
   if(!wVal||wVal<1||wVal>50){err.textContent='W (1–50)';err.classList.add('show');return;}
   err.classList.remove('show');
-  S=sVal; W=wVal; Wbase=W; sessionCount=0; saveLastParams();
+  S=sVal; W=wVal; Wbase=W;
+  // NON resettare sessionCount: è un contatore globale crescente usato da SRS nextSession
+  saveLastParams();
   buildCatScreen(); showScreen('screen-cats');
 }
 function showResetConfirm(){
