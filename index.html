@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Vocabolario EN→IT · CL26050220</title>
+<title>Vocabolario EN→IT · CL26050310</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap');
 
@@ -224,14 +224,54 @@
     color: var(--text); text-transform: uppercase; text-align: center; line-height: 1.5; max-width: 320px;
   }
   .reset-confirm-btns { display: flex; gap: 16px; width: 100%; max-width: 360px; }
-  /* (8) SÌ/NO sono primary */
-  .reset-confirm-btns button {
+  /* (6) NO = sinistra giallo fluo (primary), SÌ = destra nero (secondary) */
+  .reset-confirm-btns .btn-no {
     flex: 1; padding: 18px; border: none; border-radius: 16px;
     background: var(--accent); color: #000;
     font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600;
     text-transform: uppercase; cursor: pointer; transition: all 0.15s;
   }
-  .reset-confirm-btns button:active { transform: scale(0.97); filter: brightness(0.92); }
+  /* (7) NO = primary: scale+brightness on press */
+  .reset-confirm-btns .btn-no:active { transform: scale(0.97); filter: brightness(0.92); }
+  .reset-confirm-btns .btn-si {
+    flex: 1; padding: 18px; border: 1px solid var(--border); border-radius: 16px;
+    background: #000; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600;
+    text-transform: uppercase; cursor: pointer; transition: all 0.15s;
+  }
+  /* (8) SÌ = secondary: flash accent then return */
+  .reset-confirm-btns .btn-si:active { transform: scale(0.97); }
+  .reset-confirm-btns .btn-si.flash-accent { background: var(--accent) !important; color: #000 !important; border-color: var(--accent) !important; }
+
+  /* ── STOP CONFIRM OVERLAY ── */
+  .stop-confirm-overlay {
+    display: none; position: fixed; inset: 0; background: #000;
+    z-index: 110; flex-direction: column; align-items: center; justify-content: center;
+    gap: 24px; padding: 24px;
+  }
+  .stop-confirm-overlay.active { display: flex; }
+  .stop-confirm-text {
+    font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600;
+    color: var(--text); text-transform: uppercase; text-align: center; line-height: 1.6; max-width: 340px;
+  }
+  .stop-confirm-btns { display: flex; gap: 16px; width: 100%; max-width: 360px; }
+  /* (5)(7) NO = sinistra giallo fluo primary */
+  .stop-confirm-btns .btn-no {
+    flex: 1; padding: 18px; border: none; border-radius: 16px;
+    background: var(--accent); color: #000;
+    font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600;
+    text-transform: uppercase; cursor: pointer; transition: all 0.15s;
+  }
+  .stop-confirm-btns .btn-no:active { transform: scale(0.97); filter: brightness(0.92); }
+  /* (5)(8) SÌ = destra nero secondary */
+  .stop-confirm-btns .btn-si {
+    flex: 1; padding: 18px; border: 1px solid var(--border); border-radius: 16px;
+    background: #000; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600;
+    text-transform: uppercase; cursor: pointer; transition: all 0.15s;
+  }
+  .stop-confirm-btns .btn-si:active { transform: scale(0.97); }
+  .stop-confirm-btns .btn-si.flash-accent { background: var(--accent) !important; color: #000 !important; border-color: var(--accent) !important; }
 
   /* ── SETUP SCREEN ── */
   #screen-setup.active { gap: 6px; }
@@ -310,7 +350,7 @@
   <!-- HEADER -->
   <div id="global-header" style="display:flex;justify-content:space-between;align-items:center;padding:2px 0 4px;flex-shrink:0;">
     <div id="header-left"></div>
-    <span style="font-size:0.7rem;color:var(--muted);font-family:'Space Mono';">CL26050220</span>
+    <span style="font-size:0.7rem;color:var(--muted);font-family:'Space Mono';">CL26050310</span>
   </div>
 
   <!-- ═══════════════ SETUP ═══════════════ -->
@@ -356,8 +396,8 @@
     </div>
     <div class="mic-area" id="mic-area">
       <button class="pause-btn" id="pause-btn" onclick="togglePause()" title="Pausa">⏸️</button>
-      <!-- (7) stopExercise → marks session incomplete, no history -->
-      <button class="stop-circle-btn" id="stop-circle-btn" onclick="stopExerciseIncomplete()" title="Stop">⏹️</button>
+      <!-- (5) STOP → mostra conferma prima di interrompere -->
+      <button class="stop-circle-btn" id="stop-circle-btn" onclick="showStopConfirm(false)" title="Stop">⏹️</button>
       <div class="drill-counter-badge" id="drill-counter-badge" style="display:none;">0</div>
       <div class="drill-counter-badge" id="srs-badge" style="display:none;top:auto;bottom:12px;background:#0a2a2a;border-color:var(--accent2);color:var(--accent2);">0</div>
       <div class="mic-icon" id="mic-icon" ontouchstart="handlePushStart(event)" ontouchend="handlePushEnd(event)" onmousedown="handlePushStart(event)" onmouseup="handlePushEnd(event)">🎤</div>
@@ -395,8 +435,8 @@
     </div>
     <div class="mic-area" id="drill-mic-area">
       <button class="pause-btn" id="drill-pause-btn" onclick="togglePause()" title="Pausa">⏸️</button>
-      <!-- (7) stop in drill → incomplete -->
-      <button class="stop-circle-btn" id="drill-stop-circle-btn" onclick="stopExerciseIncomplete()" title="Stop">⏹️</button>
+      <!-- (5) STOP drill → mostra conferma prima di interrompere -->
+      <button class="stop-circle-btn" id="drill-stop-circle-btn" onclick="showStopConfirm(true)" title="Stop">⏹️</button>
       <div class="drill-counter-badge" id="drill-counter-badge-drill" style="display:none;">0</div>
       <div class="drill-counter-badge" id="srs-badge-drill" style="display:none;top:auto;bottom:12px;background:#0a2a2a;border-color:var(--accent2);color:var(--accent2);">0</div>
       <div class="mic-icon" id="drill-mic-icon" ontouchstart="handleDrillPushStart(event)" ontouchend="handleDrillPushEnd(event)" onmousedown="handleDrillPushStart(event)" onmouseup="handleDrillPushEnd(event)">🎤</div>
@@ -442,11 +482,22 @@
 </div><!-- /container -->
 
 <!-- RESET CONFIRM OVERLAY -->
+<!-- (6) NO a sinistra giallo fluo, SÌ a destra nero -->
 <div class="reset-confirm-overlay" id="reset-confirm-overlay">
   <div class="reset-confirm-text">ATTENZIONE,<br>AZZERARE<br>PAROLE RIPASSO?</div>
   <div class="reset-confirm-btns">
-    <button onclick="confirmResetSrs(true)">SÌ</button>
-    <button onclick="confirmResetSrs(false)">NO</button>
+    <button class="btn-no" onclick="confirmResetSrs(false)">NO</button>
+    <button class="btn-si" id="reset-si-btn" onclick="onSiBtn(document.getElementById('reset-si-btn'), ()=>confirmResetSrs(true))">SÌ</button>
+  </div>
+</div>
+
+<!-- STOP CONFIRM OVERLAY -->
+<!-- (5) NO a sinistra giallo fluo, SÌ a destra nero -->
+<div class="stop-confirm-overlay" id="stop-confirm-overlay">
+  <div class="stop-confirm-text">ATTENZIONE,<br>TUTTI I DATI DELLA SESSIONE CORRENTE<br>SARANNO CANCELLATI.<br>CONFERMI?</div>
+  <div class="stop-confirm-btns">
+    <button class="btn-no" onclick="confirmStop(false)">NO</button>
+    <button class="btn-si" id="stop-si-btn" onclick="onSiBtn(document.getElementById('stop-si-btn'), ()=>confirmStop(true))">SÌ</button>
   </div>
 </div>
 
@@ -480,7 +531,22 @@ let _sessionEndSrs=0;     // srsWords.length a fine sessione (= Y nello storico)
 let _drillPhaseCompleted=false; // true quando il Drill è terminato naturalmente
 let _normalPhaseCompleted=false; // true quando la Traduzione Normale è finita
 
-// ── (9) SECONDARY BUTTON FLASH ──
+// ── BUTTON HELPERS ──
+// (7) Primary-style NO button (yellow) — same animation as RIASCOLTA/CONFERMA
+// already handled by .btn-no:active in CSS
+
+// (8) Secondary-style SÌ button (black → flash yellow → back to black)
+function onSiBtn(btn, action){
+  btn.classList.add('flash-accent');
+  btn.style.transform='scale(0.97)';
+  setTimeout(()=>{
+    btn.classList.remove('flash-accent');
+    btn.style.transform='';
+    if(action) action();
+  }, 220);
+}
+
+// Secondary flash for generic secondary buttons (INDIETRO, NUOVA SESSIONE, etc.)
 function onSecondaryBtn(btn, action){
   btn.classList.add('flash-accent');
   btn.style.transform='scale(0.97)';
@@ -790,7 +856,17 @@ function updateDrillCounterBadge(){
 
 function setWordText(id,text){const el=document.getElementById(id);if(!el)return;el.dataset.real=text;el.textContent=wordVisible?text:MASK;}
 function toggleWordVisibility(){wordVisible=!wordVisible;const w1=document.getElementById('word-english');if(w1){if(!wordVisible){w1.dataset.real=w1.textContent;w1.textContent=MASK;}else if(w1.dataset.real)w1.textContent=w1.dataset.real;}const w2=document.getElementById('drill-word');if(w2){if(!wordVisible){w2.dataset.real=w2.textContent;w2.textContent=MASK;}else if(w2.dataset.real)w2.textContent=w2.dataset.real;}}
-function showToast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2000);}
+// (2) Toast su due righe centrate
+function showToast(line1, line2){
+  const t=document.createElement('div');
+  t.className='toast';
+  t.style.textAlign='center';
+  t.style.lineHeight='1.5';
+  if(line2) t.innerHTML=line1+'<br>'+line2;
+  else t.textContent=line1;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2500);
+}
 function speakCurrentWord(){if(words[currentIdx]){const w=words[currentIdx];if(exerciseMode==='en')speakAsyncLang((w[2]==='verbo'?'To ':'')+w[1],'en-US');else speakAsyncLang(w[3].split(';')[0].trim().split('/')[0].trim(),'it-IT');}}
 function speakDrillWord(){if(drillCurrentWord){const w=drillCurrentWord.word;if(exerciseMode==='en')speakAsyncLang((w[2]==='verbo'?'To ':'')+w[1],'en-US');else speakAsyncLang(w[3].split(';')[0].trim().split('/')[0].trim(),'it-IT');}}
 
@@ -849,7 +925,8 @@ function showEnd(){
   _fillEndStats();
   showScreen('screen-end');
 }
-// sessione incompleta (stop, salto drill) → mostra end ma NON salva storico
+// showEndIncomplete: sessione con normale non completata → NON salva storico, va a setup
+// (chiamata solo internamente se necessario)
 function showEndIncomplete(){
   if(currentRecognition)try{currentRecognition.stop()}catch(e){}
   currentRecognition=null;
@@ -871,12 +948,55 @@ function _fillEndStats(){
   if(eY)eY.textContent=srsWords.length;
 }
 
-// (7) Stop button → sessione incompleta
-function stopExerciseIncomplete(){
-  if(currentRecognition)try{currentRecognition.stop()}catch(e){}
+// ── STOP CONFIRM (5) ──
+let _stopFromDrill = false;
+
+function showStopConfirm(fromDrill){
+  _stopFromDrill = fromDrill;
+  // Pausa il riconoscimento vocale mentre l'overlay è aperto
+  if(currentRecognition) try{currentRecognition.stop();}catch(e){}
+  document.getElementById('stop-confirm-overlay').classList.add('active');
+}
+
+function confirmStop(yes){
+  document.getElementById('stop-confirm-overlay').classList.remove('active');
+  if(!yes){
+    // NO: torna alla schermata corrente, riprendi
+    if(!isPaused){
+      if(_stopFromDrill) setTimeout(()=>nextDrillWord&&drillCurrentWord&&speakDrillWord(),300);
+      else setTimeout(()=>showWord(),300);
+    }
+    return;
+  }
+  // SÌ
+  if(currentRecognition) try{currentRecognition.stop();}catch(e){}
   currentRecognition=null;
-  if(pendingEvalTimeout)clearTimeout(pendingEvalTimeout);
-  showEndIncomplete();
+  if(pendingEvalTimeout){clearTimeout(pendingEvalTimeout);pendingEvalTimeout=null;}
+  isHolding=false;
+  if(_stopFromDrill){
+    // (5) STOP durante Drill: la Traduzione Normale era completata → salva storico e vai a end screen
+    showEnd();
+  } else {
+    // (5) STOP durante Normale: sessione nulla → torna a setup con S/W dell'ultima sessione completa
+    // Ripristina srsWords come erano prima della sessione (rimuovi le parole aggiunte in questa sessione)
+    // Le parole SRS aggiunte durante questa sessione incompleta devono essere rimosse
+    // Carica l'ultimo stato salvato da localStorage (prima che questa sessione modificasse srsWords)
+    // Più semplice: non salvare nulla, ricarica S/W dall'ultima sessione completa in storico
+    const lastComplete = sessionHistory[0];
+    if(lastComplete){
+      document.getElementById('input-S').value = lastComplete.S;
+      document.getElementById('input-W').value = lastComplete.W;
+    } else {
+      document.getElementById('input-S').value = S;
+      document.getElementById('input-W').value = W;
+    }
+    // Rollback: rimuovi le srsWords aggiunte durante questa sessione incompleta
+    // (quelle con nextSession = sessionCount+1, aggiunte ora)
+    srsWords = srsWords.filter(s => s.nextSession !== sessionCount+1 || s.level > 1);
+    saveLastParams(); updateSrsBadge();
+    renderHistory();
+    showScreen('screen-setup');
+  }
 }
 
 // ── END SCREEN BUTTONS ──
@@ -925,7 +1045,7 @@ function confirmResetSrs(yes){
   if(yes){
     srsWords=[]; _srsSlotCount=0; _srsSlotCountFixed=0;
     saveLastParams(); updateSrsBadge();
-    showToast('PAROLE RIPASSO AZZERATE');
+    showToast('PAROLE RIPASSO','AZZERATE');
   }
 }
 
@@ -1090,7 +1210,7 @@ function stopPushListening(isDrillMode=false){
 }
 function _doEvaluate(isDrillMode){
   if(currentTranscript.trim().length>0){evaluateAnswer(currentTranscript.trim().toLowerCase(),isDrillMode);}
-  else{retryCount++;showToast(`Nessuna parola. Tentativo ${retryCount}`);if(!isDrillMode)setTimeout(()=>showWord(),1500);else setTimeout(()=>{if(drillCurrentWord)startPushListening(true);},1500);}
+  else{retryCount++;showToast('NESSUNA PAROLA','TENTATIVO '+retryCount);if(!isDrillMode)setTimeout(()=>showWord(),1500);else setTimeout(()=>{if(drillCurrentWord)startPushListening(true);},1500);}
 }
 function handlePushStart(e){e.preventDefault();if(isEvaluating)return;if(navigator.vibrate)navigator.vibrate([100,50,100]);isHolding=true;currentTranscript='';if(currentRecognition)_killRecognition();startPushListening(false);}
 function handlePushEnd(e){e.preventDefault();stopPushListening(false);}
