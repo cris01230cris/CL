@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Vocabolario EN→IT · CL26050310</title>
+<title>Vocabolario EN→IT · CL26050321</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap');
 
@@ -338,6 +338,31 @@
   /* ── END SCREEN ── */
   .end-btn-row { display: flex; flex-direction: column; gap: 10px; }
 
+  /* ── SCREEN NUMBER (3) ── */
+  #screen-number {
+    font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 1rem;
+    color: #fff; text-align: center; flex: 1;
+  }
+
+  /* ── END SCREEN NEW LAYOUT (6) ── */
+  .end-stats-list {
+    display: flex; flex-direction: column; gap: 0;
+    background: #000; border-radius: 16px; padding: 8px 0; overflow: hidden;
+  }
+  .end-stat-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 7px 18px; border-bottom: 1px solid #1a1a22;
+  }
+  .end-stat-row:last-child { border-bottom: none; }
+  .end-stat-label {
+    font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600;
+    color: var(--accent); text-transform: uppercase;
+  }
+  .end-stat-value {
+    font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600;
+    color: var(--accent);
+  }
+
   #mode-label {
     font-family: 'DM Sans', sans-serif; font-weight: 600;
     font-size: 1rem; color: var(--accent); letter-spacing: 0.03em;
@@ -349,8 +374,11 @@
 
   <!-- HEADER -->
   <div id="global-header" style="display:flex;justify-content:space-between;align-items:center;padding:2px 0 4px;flex-shrink:0;">
-    <div id="header-left"></div>
-    <span style="font-size:0.7rem;color:var(--muted);font-family:'Space Mono';">CL26050310</span>
+    <div id="header-left" style="flex:1;"></div>
+    <span id="screen-number">1</span>
+    <div style="flex:1;text-align:right;">
+      <span style="font-size:0.7rem;color:var(--muted);font-family:'Space Mono';">CL26050321</span>
+    </div>
   </div>
 
   <!-- ═══════════════ SETUP ═══════════════ -->
@@ -362,8 +390,8 @@
         <input type="number" id="input-S" min="1" max="1000" value="1">
       </div>
       <div class="input-group" style="margin-bottom:0;">
-        <div class="input-group-label">QUANTE PAROLE TRADURRE? (1-50)</div>
-        <input type="number" id="input-W" min="1" max="50" value="10">
+        <div class="input-group-label">QUANTE PAROLE TRADURRE? (4-50)</div>
+        <input type="number" id="input-W" min="4" max="50" value="10">
       </div>
       <div id="setup-error" class="error-msg" style="margin-top:4px;"></div>
     </div>
@@ -450,22 +478,34 @@
 
   <!-- ═══════════════ END SCREEN ═══════════════ -->
   <div id="screen-end" class="screen">
-    <div style="background:rgba(232,255,71,0.08);border:1px solid var(--accent);border-radius:16px;padding:12px 16px;text-align:center;">
-      <span style="font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.05em;">S=<span id="end-S"></span> &nbsp; W=<span id="end-W"></span> &nbsp; ✖=<span id="end-X"></span> &nbsp; ♻=<span id="end-Y"></span></span>
-    </div>
-    <div class="card">
-      <div class="card-label">Risultati</div>
-      <div class="stat-grid">
-        <div class="stat-box"><div class="stat-value" id="stat-correct">0</div><div class="stat-label">CORRETTE</div></div>
-        <div class="stat-box"><div class="stat-value" id="stat-wrong">0</div><div class="stat-label">SBAGLIATE</div></div>
-        <div class="stat-box"><div class="stat-value" id="stat-total">0</div><div class="stat-label">TOTALE</div></div>
-        <div class="stat-box"><div class="stat-value" id="stat-pct">0%</div><div class="stat-label">SCORE</div></div>
+    <div class="end-stats-list">
+      <div class="end-stat-row">
+        <span class="end-stat-label">Parole normali iniziali (W)</span>
+        <span class="end-stat-value" id="end-W">—</span>
+      </div>
+      <div class="end-stat-row">
+        <span class="end-stat-label">Parole ripasso iniziali (PRI)</span>
+        <span class="end-stat-value" id="end-PRI">—</span>
+      </div>
+      <div class="end-stat-row">
+        <span class="end-stat-label">Parole sbagliate sul totale (✖)</span>
+        <span class="end-stat-value" id="end-X">—</span>
+      </div>
+      <div class="end-stat-row">
+        <span class="end-stat-label">Score</span>
+        <span class="end-stat-value" id="end-score">—</span>
+      </div>
+      <div class="end-stat-row">
+        <span class="end-stat-label">Posizione parola iniziale (S)</span>
+        <span class="end-stat-value" id="end-S">—</span>
+      </div>
+      <div class="end-stat-row">
+        <span class="end-stat-label">Parole ripasso finali (PRF)</span>
+        <span class="end-stat-value" id="end-PRF">—</span>
       </div>
     </div>
     <div class="end-btn-row">
-      <!-- (8) STESSA SESSIONE primary -->
       <button class="btn btn-primary" onclick="stessaSessione()">STESSA SESSIONE</button>
-      <!-- (9) NUOVA / TERMINA secondary flash -->
       <button class="btn btn-secondary" onclick="onSecondaryBtn(this, nuovaSessione)">NUOVA SESSIONE</button>
       <button class="btn btn-secondary" onclick="onSecondaryBtn(this, terminaSessione)">TERMINA SESSIONE</button>
     </div>
@@ -593,9 +633,20 @@ function toggleDirection(){
   if(btn) btn.textContent=exerciseMode==='en'?'🇺🇸 EN→IT 🇮🇹':'🇮🇹 IT→EN 🇺🇸';
   saveLastParams();
 }
+const SCREEN_NUMBERS = {
+  'screen-setup': '1',
+  'screen-cats': '2',
+  'screen-exercise': '3',
+  'screen-drill-confirm': '4',
+  'screen-drill': '5',
+  'screen-end': '6',
+  'screen-terminate': '7'
+};
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  const sn = document.getElementById('screen-number');
+  if(sn) sn.textContent = SCREEN_NUMBERS[id] || '';
   updateHeader();
 }
 
@@ -608,15 +659,17 @@ function renderHistory(){
   if(!tbl) return;
   if(sessionHistory.length===0){tbl.innerHTML='';return;}
   let html='';
-  // (6) max 9 sessioni
   sessionHistory.slice(0,9).forEach(h=>{
     const catsHtml=ALL_CATS_ORDER.map(c=>{
       const on=h.cats&&h.cats.includes(c);
       return `<span class="${on?'history-cat-on':'history-cat-off'}">${ALL_CATS_ABBR[c]}</span>`;
     }).join(' ');
-    // (4) icona=numero con segno =
+    // (6) nuovo formato: S=X  W+PRI=W+N  ✖=N  PRF=N  EN→IT
+    const pri = h.PRI !== undefined ? h.PRI : (h.Y !== undefined ? '?' : 0);
+    const prf = h.PRF !== undefined ? h.PRF : (h.Y !== undefined ? h.Y : 0);
+    const xVal = h.X !== undefined ? h.X : 0;
     html+=`<div class="history-row">
-      <div class="history-row-top">S=${h.S}&nbsp; W=${h.W}&nbsp; ✖=${h.X}&nbsp; ♻=${h.Y}&nbsp; ${h.mode==='en'?'EN→IT':'IT→EN'}</div>
+      <div class="history-row-top">S=${h.S}&nbsp; W+PRI=${h.W}+${pri}&nbsp; <span style="color:var(--error);">✖</span>=${xVal}&nbsp; PRF=${prf}&nbsp; ${h.mode==='en'?'EN→IT':'IT→EN'}</div>
       <div class="history-row-cats">${catsHtml}</div>
     </div>`;
   });
@@ -628,12 +681,12 @@ function loadHistory(){
   if(raw){try{sessionHistory=JSON.parse(raw);}catch(e){sessionHistory=[];}}
 }
 // addHistoryEntry: solo quando Traduzione Normale completata
-// X = valore più alto del Contatore Drill durante la sessione (anche se Drill saltato)
-// Y = numero totale Parole Ripasso a fine sessione
+// X  = valore più alto del Contatore Drill (anche se Drill saltato)
+// PRI = Parole Ripasso iniziali (quante erano all'inizio della sessione)
+// PRF = Parole Ripasso finali (quante sono al termine della sessione)
 function addHistoryEntry(){
-  const entry={S,W,X:_sessionMaxDrill,Y:srsWords.length,mode:exerciseMode,cats:Array.from(selectedCats)};
+  const entry={S, W, PRI:_srsSlotCountFixed, X:_sessionMaxDrill, PRF:srsWords.length, mode:exerciseMode, cats:Array.from(selectedCats)};
   sessionHistory.unshift(entry);
-  // mantieni solo 9
   if(sessionHistory.length>9) sessionHistory=sessionHistory.slice(0,9);
   saveHistory();
 }
@@ -937,15 +990,18 @@ function showEndIncomplete(){
 function _fillEndStats(){
   const total=stats.correct+stats.wrong;
   const pct=total>0?Math.round((stats.correct/total)*100):0;
-  document.getElementById('stat-correct').textContent=stats.correct;
-  document.getElementById('stat-wrong').textContent=stats.wrong;
-  document.getElementById('stat-total').textContent=total;
-  document.getElementById('stat-pct').textContent=pct+'%';
-  const eS=document.getElementById('end-S');const eW=document.getElementById('end-W');
-  const eX=document.getElementById('end-X');const eY=document.getElementById('end-Y');
-  if(eS)eS.textContent=S;if(eW)eW.textContent=W;
-  if(eX)eX.textContent=_sessionMaxDrill;
-  if(eY)eY.textContent=srsWords.length;
+  const eW=document.getElementById('end-W');
+  const ePRI=document.getElementById('end-PRI');
+  const eX=document.getElementById('end-X');
+  const eScore=document.getElementById('end-score');
+  const eS=document.getElementById('end-S');
+  const ePRF=document.getElementById('end-PRF');
+  if(eW) eW.textContent=W;
+  if(ePRI) ePRI.textContent=_srsSlotCountFixed;
+  if(eX) eX.textContent=_sessionMaxDrill;
+  if(eScore) eScore.textContent=pct+'%';
+  if(eS) eS.textContent=S;
+  if(ePRF) ePRF.textContent=srsWords.length;
 }
 
 // ── STOP CONFIRM (5) ──
@@ -1030,10 +1086,9 @@ function startExercise(){
   const wVal=parseInt(document.getElementById('input-W').value);
   const err=document.getElementById('setup-error');
   if(!sVal||sVal<1||sVal>1000){err.textContent='S (1–1000)';err.classList.add('show');return;}
-  if(!wVal||wVal<1||wVal>50){err.textContent='W (1–50)';err.classList.add('show');return;}
+  if(!wVal||wVal<4||wVal>50){err.textContent='W (4–50)';err.classList.add('show');return;}
   err.classList.remove('show');
   S=sVal; W=wVal; Wbase=W;
-  // NON resettare sessionCount: è un contatore globale crescente usato da SRS nextSession
   saveLastParams();
   buildCatScreen(); showScreen('screen-cats');
 }
@@ -1224,6 +1279,9 @@ window.onload=function(){
   loadLastParams();
   updateHeader();
   renderHistory();
+  // Set initial screen number
+  const sn=document.getElementById('screen-number');
+  if(sn) sn.textContent='1';
   if(window.speechSynthesis){
     window.speechSynthesis.getVoices();
     window.speechSynthesis.onvoiceschanged=()=>{getBestItalianVoice();getBestEnglishVoice();};
