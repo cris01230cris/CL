@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Vocabolario EN→IT · CL26050321</title>
+<title>Vocabolario EN→IT · CL26050410</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap');
 
@@ -377,7 +377,7 @@
     <div id="header-left" style="flex:1;"></div>
     <span id="screen-number">1</span>
     <div style="flex:1;text-align:right;">
-      <span style="font-size:0.7rem;color:var(--muted);font-family:'Space Mono';">CL26050321</span>
+      <span style="font-size:0.7rem;color:var(--muted);font-family:'Space Mono';">CL26050410</span>
     </div>
   </div>
 
@@ -478,6 +478,49 @@
 
   <!-- ═══════════════ END SCREEN ═══════════════ -->
   <div id="screen-end" class="screen">
+
+    <!-- TACHIMETRO SVG (4) -->
+    <svg id="gauge-svg" width="100%" viewBox="0 0 380 185" xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0;">
+      <defs>
+        <!-- gradiente lungo l'arco: rosso→giallo→verde con svolta al 42% e 70% -->
+        <linearGradient id="gGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stop-color="#ff2d55"/>
+          <stop offset="40%"  stop-color="#e8ff47"/>
+          <stop offset="70%"  stop-color="#47ff8a"/>
+          <stop offset="100%" stop-color="#47ff8a"/>
+        </linearGradient>
+      </defs>
+      <!-- arco sfondo grigio scuro -->
+      <path id="gauge-bg"
+        d="M 105.4 84.2 A 90 90 0 0 1 274.6 84.2"
+        fill="none" stroke="#1a1a22" stroke-width="14" stroke-linecap="round"/>
+      <!-- arco colorato completo (sempre visibile come sfondo del gradiente) -->
+      <path id="gauge-track"
+        d="M 105.4 84.2 A 90 90 0 0 1 274.6 84.2"
+        fill="none" stroke="url(#gGrad)" stroke-width="14" stroke-linecap="round"/>
+      <!-- ago: linea dal centro al punto sull'arco -->
+      <line id="gauge-needle"
+        x1="190" y1="115" x2="190" y2="25"
+        stroke="#e8ff47" stroke-width="3" stroke-linecap="round"/>
+      <!-- cerchio perno centrale -->
+      <circle id="gauge-pivot"
+        cx="190" cy="115" r="7"
+        fill="#000" stroke="#e8ff47" stroke-width="2.5"/>
+      <!-- etichetta SCORE -->
+      <text id="gauge-label-score"
+        x="190" y="148"
+        text-anchor="middle"
+        font-family="DM Sans, sans-serif" font-size="11" font-weight="600"
+        letter-spacing="0.12em" fill="#e8ff47">SCORE</text>
+      <!-- valore percentuale -->
+      <text id="gauge-label-pct"
+        x="190" y="175"
+        text-anchor="middle"
+        font-family="DM Sans, sans-serif" font-size="34" font-weight="700"
+        fill="#e8ff47">—</text>
+    </svg>
+
+    <!-- LISTA DATI (3: score rimosso, 5 righe) -->
     <div class="end-stats-list">
       <div class="end-stat-row">
         <span class="end-stat-label">Parole normali iniziali (W)</span>
@@ -492,10 +535,6 @@
         <span class="end-stat-value" id="end-X">—</span>
       </div>
       <div class="end-stat-row">
-        <span class="end-stat-label">Score</span>
-        <span class="end-stat-value" id="end-score">—</span>
-      </div>
-      <div class="end-stat-row">
         <span class="end-stat-label">Posizione parola iniziale (S)</span>
         <span class="end-stat-value" id="end-S">—</span>
       </div>
@@ -504,11 +543,15 @@
         <span class="end-stat-value" id="end-PRF">—</span>
       </div>
     </div>
-    <div class="end-btn-row">
-      <button class="btn btn-primary" onclick="stessaSessione()">STESSA SESSIONE</button>
-      <button class="btn btn-secondary" onclick="onSecondaryBtn(this, nuovaSessione)">NUOVA SESSIONE</button>
-      <button class="btn btn-secondary" onclick="onSecondaryBtn(this, terminaSessione)">TERMINA SESSIONE</button>
-    </div>
+
+      <!-- (2) NUOVA SESSIONE = giallo fluo (primary), STESSA SESSIONE = nero (secondary) -->
+      <div class="end-btn-row">
+        <button class="btn btn-primary" id="btn-nuova-sessione" onclick="stessaSessioneOrNuova('nuova')">NUOVA SESSIONE</button>
+        <button class="btn btn-secondary" id="btn-stessa-sessione" onclick="stessaSessioneOrNuova('stessa')">STESSA SESSIONE</button>
+        <button class="btn btn-secondary" onclick="onSecondaryBtn(this, terminaSessione)">TERMINA SESSIONE</button>
+      </div>
+
+      </div>
   </div>
 
   <!-- ═══════════════ TERMINATE SCREEN ═══════════════ -->
@@ -987,21 +1030,65 @@ function showEndIncomplete(){
   _fillEndStats();
   showScreen('screen-end');
 }
+// ── GAUGE (tachimetro schermata 6) ──
+// Geometria: cx=190, cy=115, r=90, arco da -160° a -20° (totale 140°)
+function _gaugeColor(pct){
+  // 0-40%: rosso→giallo, 40-70%: giallo→verde, 70-100%: verde
+  function lerp(a,b,t){return Math.round(a+(b-a)*t);}
+  const red=[255,45,85], yel=[232,255,71], grn=[71,255,138];
+  let r,g,b;
+  if(pct<=40){const t=pct/40;r=lerp(red[0],yel[0],t);g=lerp(red[1],yel[1],t);b=lerp(red[2],yel[2],t);}
+  else if(pct<=70){const t=(pct-40)/30;r=lerp(yel[0],grn[0],t);g=lerp(yel[1],grn[1],t);b=lerp(yel[2],grn[2],t);}
+  else{r=grn[0];g=grn[1];b=grn[2];}
+  return '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
+}
+function _updateGauge(pct){
+  const cx=190, cy=115, r=90;
+  const startDeg=-160, totalDeg=140;
+  const toRad=d=>d*Math.PI/180;
+  const ang=startDeg+(pct/100)*totalDeg;
+  const tx=(cx+r*Math.cos(toRad(ang))).toFixed(1);
+  const ty=(cy+r*Math.sin(toRad(ang))).toFixed(1);
+  const col=_gaugeColor(pct);
+  const needle=document.getElementById('gauge-needle');
+  const pivot=document.getElementById('gauge-pivot');
+  const lScore=document.getElementById('gauge-label-score');
+  const lPct=document.getElementById('gauge-label-pct');
+  if(needle){needle.setAttribute('x2',tx);needle.setAttribute('y2',ty);needle.setAttribute('stroke',col);}
+  if(pivot){pivot.setAttribute('stroke',col);}
+  if(lScore){lScore.setAttribute('fill',col);}
+  if(lPct){lPct.setAttribute('fill',col);lPct.textContent=pct+'%';}
+}
+
 function _fillEndStats(){
   const total=stats.correct+stats.wrong;
   const pct=total>0?Math.round((stats.correct/total)*100):0;
   const eW=document.getElementById('end-W');
   const ePRI=document.getElementById('end-PRI');
   const eX=document.getElementById('end-X');
-  const eScore=document.getElementById('end-score');
   const eS=document.getElementById('end-S');
   const ePRF=document.getElementById('end-PRF');
   if(eW) eW.textContent=W;
   if(ePRI) ePRI.textContent=_srsSlotCountFixed;
   if(eX) eX.textContent=_sessionMaxDrill;
-  if(eScore) eScore.textContent=pct+'%';
   if(eS) eS.textContent=S;
   if(ePRF) ePRF.textContent=srsWords.length;
+  // Aggiorna tachimetro con animazione
+  _animateGauge(pct);
+}
+
+function _animateGauge(targetPct){
+  // Animazione ago: parte da 0 e raggiunge targetPct in ~600ms
+  const steps=30, duration=600;
+  let step=0;
+  // Aggiorna subito a 0
+  _updateGauge(0);
+  const interval=setInterval(()=>{
+    step++;
+    const ease=1-Math.pow(1-(step/steps),3); // cubic ease-out
+    _updateGauge(Math.round(targetPct*ease));
+    if(step>=steps){clearInterval(interval);_updateGauge(targetPct);}
+  }, duration/steps);
 }
 
 // ── STOP CONFIRM (5) ──
@@ -1056,6 +1143,24 @@ function confirmStop(yes){
 }
 
 // ── END SCREEN BUTTONS ──
+// (2) NUOVA SESSIONE = primary (giallo fluo, brightness on press)
+//     STESSA SESSIONE = secondary (nero, flash giallo poi ritorna)
+function stessaSessioneOrNuova(which){
+  if(which==='nuova'){
+    // animazione primary: già gestita da :active CSS, esegui subito
+    nuovaSessione();
+  } else {
+    // animazione secondary: flash giallo poi esegui
+    const btn=document.getElementById('btn-stessa-sessione');
+    if(btn){
+      btn.classList.add('flash-accent');
+      btn.style.transform='scale(0.97)';
+      setTimeout(()=>{btn.classList.remove('flash-accent');btn.style.transform='';stessaSessione();},220);
+    } else {
+      stessaSessione();
+    }
+  }
+}
 function stessaSessione(){
   incrSessionCount(); saveLastParams();
   confirmCats();
