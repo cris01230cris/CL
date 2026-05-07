@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Vocabolario EN→IT · CL26050410</title>
+<title>Vocabolario EN→IT · CL26050708</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap');
 
@@ -17,6 +17,12 @@
     --muted: #666;
     --error: #ff4747;
     --success: #47ff8a;
+    /* ── Colori semantici schermata 1 e 6 (variante 1) ── */
+    --col-S:   #47ff8a;   /* verde fluo  — posizione S */
+    --col-W:   #e8ff47;   /* giallo fluo — W e PRI     */
+    --col-X:   #ff2d55;   /* rosso fluo  — errori ✖    */
+    --col-PRF: #c247ff;   /* viola fluo  — PRF         */
+    --col-dir: #ffffff;   /* bianco      — direzione e categorie attive */
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -313,15 +319,23 @@
   .history-row:last-child { border-bottom: none; }
   .history-row-top {
     font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 600;
-    color: var(--accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3;
+    display: flex; align-items: baseline; gap: 0;
   }
-  /* (5) categorie allineate a destra */
+  /* token colori storia schermata 1 */
+  .ht-s   { color: var(--col-S);   }
+  .ht-w   { color: var(--col-W);   }
+  .ht-x   { color: var(--col-X);   }
+  .ht-prf { color: var(--col-PRF); }
+  .ht-dir { color: var(--col-dir); }
+  .ht-sep { color: #333; padding: 0 4px; }
+  /* categorie: attive bianche, inattive quasi nere */
   .history-row-cats {
     font-family: 'DM Sans', sans-serif; font-size: 0.7rem; font-weight: 600;
     line-height: 1.3; letter-spacing: 0.02em; text-align: right;
   }
-  .history-cat-on  { color: var(--accent); }
-  .history-cat-off { color: #333; }
+  .history-cat-on  { color: var(--col-dir); }
+  .history-cat-off { color: #2a2a2a; }
 
   /* ── CATS SCREEN ── */
   #screen-cats.active { gap: 8px; overflow: hidden; }
@@ -356,12 +370,17 @@
   .end-stat-row:last-child { border-bottom: none; }
   .end-stat-label {
     font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600;
-    color: var(--accent); text-transform: uppercase;
+    text-transform: uppercase;
   }
   .end-stat-value {
     font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600;
-    color: var(--accent);
   }
+  /* colori per riga schermata 6 */
+  .end-row-W   .end-stat-label, .end-row-W   .end-stat-value { color: var(--col-W);   }
+  .end-row-PRI .end-stat-label, .end-row-PRI .end-stat-value { color: var(--col-W);   }
+  .end-row-X   .end-stat-label, .end-row-X   .end-stat-value { color: var(--col-X);   }
+  .end-row-S   .end-stat-label, .end-row-S   .end-stat-value { color: var(--col-S);   }
+  .end-row-PRF .end-stat-label, .end-row-PRF .end-stat-value { color: var(--col-PRF); }
 
   #mode-label {
     font-family: 'DM Sans', sans-serif; font-weight: 600;
@@ -377,7 +396,7 @@
     <div id="header-left" style="flex:1;"></div>
     <span id="screen-number">1</span>
     <div style="flex:1;text-align:right;">
-      <span style="font-size:0.7rem;color:var(--muted);font-family:'Space Mono';">CL26050410</span>
+      <span style="font-size:0.7rem;color:var(--muted);font-family:'Space Mono';">CL26050708</span>
     </div>
   </div>
 
@@ -520,25 +539,25 @@
         fill="#e8ff47">—</text>
     </svg>
 
-    <!-- LISTA DATI (3: score rimosso, 5 righe) -->
+    <!-- LISTA DATI (score rimosso, 5 righe) -->
     <div class="end-stats-list">
-      <div class="end-stat-row">
+      <div class="end-stat-row end-row-W">
         <span class="end-stat-label">Parole normali iniziali (W)</span>
         <span class="end-stat-value" id="end-W">—</span>
       </div>
-      <div class="end-stat-row">
+      <div class="end-stat-row end-row-PRI">
         <span class="end-stat-label">Parole ripasso iniziali (PRI)</span>
         <span class="end-stat-value" id="end-PRI">—</span>
       </div>
-      <div class="end-stat-row">
+      <div class="end-stat-row end-row-X">
         <span class="end-stat-label">Parole sbagliate sul totale (✖)</span>
         <span class="end-stat-value" id="end-X">—</span>
       </div>
-      <div class="end-stat-row">
+      <div class="end-stat-row end-row-S">
         <span class="end-stat-label">Posizione parola iniziale (S)</span>
         <span class="end-stat-value" id="end-S">—</span>
       </div>
-      <div class="end-stat-row">
+      <div class="end-stat-row end-row-PRF">
         <span class="end-stat-label">Parole ripasso finali (PRF)</span>
         <span class="end-stat-value" id="end-PRF">—</span>
       </div>
@@ -707,12 +726,18 @@ function renderHistory(){
       const on=h.cats&&h.cats.includes(c);
       return `<span class="${on?'history-cat-on':'history-cat-off'}">${ALL_CATS_ABBR[c]}</span>`;
     }).join(' ');
-    // (6) nuovo formato: S=X  W+PRI=W+N  ✖=N  PRF=N  EN→IT
-    const pri = h.PRI !== undefined ? h.PRI : (h.Y !== undefined ? '?' : 0);
-    const prf = h.PRF !== undefined ? h.PRF : (h.Y !== undefined ? h.Y : 0);
+    const pri = h.PRI !== undefined ? h.PRI : 0;
+    const prf = h.PRF !== undefined ? h.PRF : 0;
     const xVal = h.X !== undefined ? h.X : 0;
+    const dir = h.mode==='en'?'EN→IT':'IT→EN';
     html+=`<div class="history-row">
-      <div class="history-row-top">S=${h.S}&nbsp; W+PRI=${h.W}+${pri}&nbsp; <span style="color:var(--error);">✖</span>=${xVal}&nbsp; PRF=${prf}&nbsp; ${h.mode==='en'?'EN→IT':'IT→EN'}</div>
+      <div class="history-row-top">
+        <span class="ht-s">S=${h.S}</span><span class="ht-sep">·</span>
+        <span class="ht-w">W+PRI=${h.W}+${pri}</span><span class="ht-sep">·</span>
+        <span class="ht-x">✖=${xVal}</span><span class="ht-sep">·</span>
+        <span class="ht-prf">PRF=${prf}</span><span class="ht-sep">·</span>
+        <span class="ht-dir">${dir}</span>
+      </div>
       <div class="history-row-cats">${catsHtml}</div>
     </div>`;
   });
