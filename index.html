@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Vocabolario EN→IT · CL26050715</title>
+<title>Vocabolario EN→IT · CL26050816</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap');
 
@@ -391,7 +391,7 @@
     <div id="header-left" style="flex:1;"></div>
     <span id="screen-number">1</span>
     <div style="flex:1;text-align:right;">
-      <span style="font-size:0.7rem;color:var(--muted);font-family:'Space Mono';">CL26050715</span>
+      <span style="font-size:0.7rem;color:var(--muted);font-family:'Space Mono';">CL26050816</span>
     </div>
   </div>
 
@@ -400,7 +400,7 @@
     <div class="card" style="padding:12px 16px;">
       <!-- (3) testo cambiato -->
       <div class="input-group">
-        <div class="input-group-label">DA QUALE PAROLA INIZIARE? (1-1000)</div>
+        <div class="input-group-label" id="label-S">DA QUALE PAROLA INIZIARE? (1-…)</div>
         <input type="number" id="input-S" min="1" max="1000" value="1">
       </div>
       <div class="input-group" style="margin-bottom:0;">
@@ -549,7 +549,7 @@
         <span class="end-stat-value" id="end-PRI">—</span>
       </div>
       <div class="end-stat-row end-row-X">
-        <span class="end-stat-label">Parole sbagliate W+PRI (✖)</span>
+        <span class="end-stat-label">Parole sbagliate totali W+PRI (✖)</span>
         <span class="end-stat-value" id="end-X">—</span>
       </div>
       <div class="end-stat-row end-row-PRF">
@@ -1175,7 +1175,8 @@ function startExercise(){
   const sVal=parseInt(document.getElementById('input-S').value);
   const wVal=parseInt(document.getElementById('input-W').value);
   const err=document.getElementById('setup-error');
-  if(!sVal||sVal<1||sVal>1000){err.textContent='S (1–1000)';err.classList.add('show');return;}
+  const maxS=RAW.length-4;
+  if(!sVal||sVal<1||sVal>maxS){err.textContent='S (1–'+maxS+')';err.classList.add('show');return;}
   if(!wVal||wVal<4||wVal>50){err.textContent='W (4–50)';err.classList.add('show');return;}
   err.classList.remove('show');
   S=sVal; W=wVal;
@@ -1359,6 +1360,11 @@ function submitManual(){if(isPaused){showToast('Pausa');return;}const val=docume
 function submitDrillManual(){if(isPaused){showToast('Pausa');return;}const val=document.getElementById('drill-manual-text').value.trim().toLowerCase();if(!val)return;document.getElementById('drill-manual-text').value='';if(currentRecognition)stopPushListening(true);if(pendingEvalTimeout)clearTimeout(pendingEvalTimeout);isEvaluating=true;evaluateAnswer(val,true);}
 
 window.onload=function(){
+  const maxS=RAW.length-4;
+  const labelS=document.getElementById('label-S');
+  if(labelS) labelS.textContent='DA QUALE PAROLA INIZIARE? (1-'+maxS+')';
+  const inputS=document.getElementById('input-S');
+  if(inputS) inputS.max=maxS;
   loadLastParams();
   updateHeader();
   renderHistory();
